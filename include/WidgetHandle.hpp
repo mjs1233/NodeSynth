@@ -18,6 +18,3 @@ WidgetHandle makeHandle(std::shared_ptr<W> widget)
         [widget](const Input& input) mutable { widget->update(input); }
     };
 }
-
-
-#include "WidgetHandle.inl"

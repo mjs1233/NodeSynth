@@ -133,8 +133,6 @@
     <ClInclude Include="include\Appstate.hpp" />
     <ClInclude Include="include\Button.hpp" />
     <ClInclude Include="include\Button_t.h" />
-    <ClInclude Include="include\CLICommands.h" />
-    <ClInclude Include="include\ConsoleView.h" />
     <ClInclude Include="include\Input.hpp" />
     <ClInclude Include="include\InputMode.hpp" />
     <ClInclude Include="include\MutiStateRenderTarget_t.h" />
@@ -146,11 +144,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Button.cpp" />
-    <ClCompile Include="source\ConsoleView.cpp" />
     <ClCompile Include="source\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="source\WidgetHandle.inl" />
+    <ClCompile Include="source\NodeUI.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

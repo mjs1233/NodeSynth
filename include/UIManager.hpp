@@ -12,7 +12,7 @@ public:
     UIManager() = default;
 
     template <typename W>
-    void addWidget(std::shared_ptr<W> w)
+    void addWidget(const std::shared_ptr<W>& w)
     {
         widgets.push_back(makeHandle(w));
     }

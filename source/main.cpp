@@ -11,45 +11,28 @@
 #include "UIManager.hpp"
 
 #include "Appstate.hpp"
-#include "test.h"
 
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 
 
-void callback(Button* self, Button::callback_type event_)
-{
-    if (event_ == Button::callback_type::state_changed)
-    {
-        if (self->state == Button::state_type::clicked)
-        {
-            self->color = SDL_Color{ 0x00,0xFF,0x00,0xFF };
-        }
-        else if (self->state == Button::state_type::hover)
-        {
-            self->color = SDL_Color{ 0x00,0x00,0xFF,0xFF };
-        }
-        else if (self->state == Button::state_type::idle)
-        {
-            self->color = SDL_Color{ 0xFF,0x00,0x00,0xFF };
-        }
-    }
-}
+void test_callback(Button* self, Button::callback_type event_) {}
 
 
 
 
 
+//SDL init callback
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 {
-    SDL_SetAppMetadata("Example Renderer Clear", "1.0", "com.example.renderer-clear");
+    SDL_SetAppMetadata("node-synth", "1.0","node-synth_10");
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
-    if (!SDL_CreateWindowAndRenderer("examples/renderer/clear", 640, 480, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
+    if (!SDL_CreateWindowAndRenderer("node-synth", 640, 480, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
@@ -59,14 +42,18 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
     Appstate& state = *static_cast<Appstate*>(*appstate);
     state.input_mode = InputMode::SDL_WINDOW;
 
-    Button button({ 0,0,100,30 }, callback, SDL_Color{ 0xFF,0x00,0x00,0xFF });
+
+    //button test
+    Button button({ 0,0,100,30 }, test_callback, SDL_Color{ 0xFF,0x00,0x00,0xFF });
     state.ui.addWidget(std::make_shared<Button>(std::move(button)));
+
+    //node test
     NodeUI nodeui;
     state.ui.addWidget(std::make_shared<NodeUI>(std::move(nodeui)));
     return SDL_APP_CONTINUE;
 }
 
-/* This function runs when a new event (mouse input, keypresses, etc) occurs. */
+//SDL event callback
 SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 {
     Appstate& state = *static_cast<Appstate*>(appstate);
@@ -81,15 +68,10 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 }
 
 
-/* This function runs once per frame, and is the heart of the program. */
+//SDL update callback
 SDL_AppResult SDL_AppIterate(void* appstate)
 {
     Appstate& state = *static_cast<Appstate*>(appstate);
-    if (state.input_mode == InputMode::Console)
-    {
-        //state.console_view.update();
-    }
-
 
     state.ui.update(state.input);
 
@@ -106,7 +88,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
     return SDL_APP_CONTINUE;  
 }
 
-/* This function runs once at shutdown. */
+//SDL terminate callback
 void SDL_AppQuit(void* appstate, SDL_AppResult result)
 {
 

@@ -23,17 +23,7 @@ public:
 	NodeUI() :
 		Widget<NodeUI>(SDL_FRect{ 0,0,100,80 }) {}
 
-	void renderImpl(SDL_Renderer* renderer)
-	{
-		SDL_SetRenderDrawColor(renderer, bodyColor.r, bodyColor.g, bodyColor.b, bodyColor.a);
-		SDL_RenderFillRect(renderer, &bounds);
-		SDL_SetRenderDrawColor(renderer, topBarColor.r, topBarColor.g, topBarColor.b, topBarColor.a);
-		SDL_FRect topBarRect{ bounds.x,bounds.y,bounds.w,20 };
-		SDL_RenderFillRect(renderer, &topBarRect);
-	}
+	void renderImpl(SDL_Renderer* renderer);
+	void updateImpl(const Input& input);
 
-	void updateImpl(const Input& input)
-	{
-		
-	}
 };

@@ -27,12 +27,6 @@
     <ClInclude Include="include\Appstate.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="include\CLICommands.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ConsoleView.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="include\Input.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -68,16 +62,11 @@
     <ClCompile Include="source\Button.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="source\ConsoleView.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="source\main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="source\WidgetHandle.inl">
+    <ClCompile Include="source\NodeUI.cpp">
       <Filter>소스 파일</Filter>
-    </None>
+    </ClCompile>
   </ItemGroup>
 </Project>
