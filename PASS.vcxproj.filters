@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일\APL">
+      <UniqueIdentifier>{1f353c24-5300-4d1e-a8d0-bfa7c600c511}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\UI">
+      <UniqueIdentifier>{56b1ac61-767a-4b9b-8b6d-68c5101b94d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\UI\UserUI">
+      <UniqueIdentifier>{01af948b-e8ed-4a1c-8812-7f0ddfc74a43}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Appstate.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CLICommands.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ConsoleView.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Input.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InputMode.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Button.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Button_t.h">
+      <Filter>헤더 파일\UI\UserUI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderEndpoint_Rect_t.h">
+      <Filter>헤더 파일\UI\UserUI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NodeUI.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Widget.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WidgetHandle.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIManager.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MutiStateRenderTarget_t.h">
+      <Filter>헤더 파일\UI\UserUI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\Button.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ConsoleView.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\WidgetHandle.inl">
+      <Filter>소스 파일</Filter>
+    </None>
+  </ItemGroup>
+</Project>
