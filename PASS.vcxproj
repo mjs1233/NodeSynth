@@ -131,6 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\Appstate.hpp" />
+    <ClInclude Include="include\AudioManager.hpp" />
     <ClInclude Include="include\Button.hpp" />
     <ClInclude Include="include\Button_t.h" />
     <ClInclude Include="include\Input.hpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="include\WidgetHandle.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\AudioManager.cpp" />
     <ClCompile Include="source\Button.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\NodeUI.cpp" />

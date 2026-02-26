@@ -13,9 +13,9 @@
 class NodeUI : public Widget<NodeUI>
 {
 private:
-	SDL_Color topBarColor{60,60,60 ,0xFF};
-	SDL_Color bodyColor{ 120,120, 120 ,0xFF };
-	SDL_Color connectPointColor{ 0xFF, 0xFF, 0xFF ,0xFF };
+	SDL_Color top_bar_color{60,60,60 ,0xFF};
+	SDL_Color body_color{ 120,120, 120 ,0xFF };
+	SDL_Color connect_point_color{ 0xFF, 0xFF, 0xFF ,0xFF };
 
 public:
 

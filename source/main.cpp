@@ -12,9 +12,12 @@
 
 #include "Appstate.hpp"
 
+#include "AudioManager.hpp"
+
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 
+static AudioManager* audio;
 
 void test_callback(Button* self, Button::callback_type event_) {}
 
@@ -50,6 +53,10 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
     //node test
     NodeUI nodeui;
     state.ui.addWidget(std::make_shared<NodeUI>(std::move(nodeui)));
+
+    //audio test
+    audio = new AudioManager(2, 48000);
+
     return SDL_APP_CONTINUE;
 }
 
