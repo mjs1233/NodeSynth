@@ -32,13 +32,13 @@ public:
 
 public:
     Button(const SDL_FRect& bounds,const std::function<void(Button*, callback_type)>& callback, SDL_Color color) : 
-		Widget<Button>(bounds), 
+		Widget<Button>(bounds,true), 
 		callback(callback),
 		color(color),
 		text(""),
 		state(state_type::idle) {}
 
-	void renderImpl(SDL_Renderer* renderer);
+	void renderImpl(SDL_Renderer* renderer) const;
 	void updateImpl(const Input& input);
 
 };

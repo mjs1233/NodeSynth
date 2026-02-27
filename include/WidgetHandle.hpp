@@ -11,10 +11,10 @@ struct WidgetHandle
 };
 
 template <typename W>
-WidgetHandle makeHandle(std::shared_ptr<W> widget)
+WidgetHandle makeHandle(const std::shared_ptr<W>& widget)
 {
     return {
-        [widget](SDL_Renderer* renderer) mutable { widget->render(renderer); },
+        [widget](SDL_Renderer *const renderer) mutable { widget->render(renderer); },
         [widget](const Input& input) mutable { widget->update(input); }
     };
 }

@@ -8,17 +8,20 @@ class Widget
 {
 public:
     SDL_FRect bounds{};
+    bool active;
 
 public:
-    Widget(const SDL_FRect& bounds) : bounds(bounds) {};
+    Widget(const SDL_FRect& bounds, bool active) : bounds(bounds), active(active) {};
 
-    void render(SDL_Renderer* renderer) 
+    void render(SDL_Renderer* renderer) const 
     {
-        static_cast<T*>(this)->renderImpl(renderer);
+        if(active)
+            static_cast<const T*>(this)->renderImpl(renderer);
     }
 
-    void update(const Input& input) 
+    void update(const Input& input)
     {
-        static_cast<T*>(this)->updateImpl(input);
+        if (active)
+            static_cast<T*>(this)->updateImpl(input);
     }
 };

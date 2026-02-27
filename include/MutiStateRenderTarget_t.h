@@ -1,11 +1,12 @@
 #pragma once
 
-#include <SDL3/SDL.h>
 #include <array>
 #include <tuple>
 #include <print>
 #include <variant>
 #include <functional>
+
+#include <SDL3/SDL.h>
 
 template <typename ...targets>
 class MutiStateRenderTarget

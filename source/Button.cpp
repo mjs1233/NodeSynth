@@ -1,6 +1,6 @@
 #include "Button.hpp"
 
-void Button::renderImpl(SDL_Renderer* renderer)
+void Button::renderImpl(SDL_Renderer* renderer) const
 {
     // std::print("button render\n");
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);

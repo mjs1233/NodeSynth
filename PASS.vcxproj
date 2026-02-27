@@ -131,12 +131,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\Appstate.hpp" />
+    <ClInclude Include="include\AudioComponent.hpp" />
+    <ClInclude Include="include\AudioComponentHandle.hpp" />
     <ClInclude Include="include\AudioManager.hpp" />
     <ClInclude Include="include\Button.hpp" />
     <ClInclude Include="include\Button_t.h" />
     <ClInclude Include="include\Input.hpp" />
     <ClInclude Include="include\InputMode.hpp" />
     <ClInclude Include="include\MutiStateRenderTarget_t.h" />
+    <ClInclude Include="include\NodeConnector.hpp" />
+    <ClInclude Include="include\NodeManager.hpp" />
     <ClInclude Include="include\NodeUI.hpp" />
     <ClInclude Include="include\RenderEndpoint_Rect_t.h" />
     <ClInclude Include="include\UIManager.hpp" />
@@ -144,6 +148,7 @@
     <ClInclude Include="include\WidgetHandle.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\AudioComponent.cpp" />
     <ClCompile Include="source\AudioManager.cpp" />
     <ClCompile Include="source\Button.cpp" />
     <ClCompile Include="source\main.cpp" />

@@ -22,6 +22,9 @@
     <Filter Include="헤더 파일\UI\UserUI">
       <UniqueIdentifier>{01af948b-e8ed-4a1c-8812-7f0ddfc74a43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\AudioSystem">
+      <UniqueIdentifier>{49ddf7b0-f729-47e5-98bc-8fd08dacb19f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Appstate.hpp">
@@ -58,7 +61,19 @@
       <Filter>헤더 파일\UI\UserUI</Filter>
     </ClInclude>
     <ClInclude Include="include\AudioManager.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AudioComponent.hpp">
+      <Filter>헤더 파일\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AudioComponentHandle.hpp">
+      <Filter>헤더 파일\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NodeManager.hpp">
+      <Filter>헤더 파일\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NodeConnector.hpp">
+      <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +87,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="source\AudioManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AudioComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
