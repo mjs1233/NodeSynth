@@ -1,8 +1,7 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include <print>
-class Input
-{
+class Input {
 public:
 	int mouse_x;
 	int mouse_y;

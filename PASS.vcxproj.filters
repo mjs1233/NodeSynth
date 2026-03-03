@@ -36,26 +36,11 @@
     <ClInclude Include="include\InputMode.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="include\Button.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
     <ClInclude Include="include\Button_t.h">
       <Filter>헤더 파일\UI\UserUI</Filter>
     </ClInclude>
     <ClInclude Include="include\RenderEndpoint_Rect_t.h">
       <Filter>헤더 파일\UI\UserUI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\NodeUI.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Widget.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\WidgetHandle.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UIManager.hpp">
-      <Filter>헤더 파일\UI</Filter>
     </ClInclude>
     <ClInclude Include="include\MutiStateRenderTarget_t.h">
       <Filter>헤더 파일\UI\UserUI</Filter>
@@ -75,15 +60,18 @@
     <ClInclude Include="include\NodeConnector.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
+    <ClInclude Include="include\UIComponent.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Button.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIHandler.hpp">
+      <Filter>헤더 파일\UI\UserUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Button.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="source\main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="source\NodeUI.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="source\AudioManager.cpp">

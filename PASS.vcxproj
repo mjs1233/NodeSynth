@@ -141,18 +141,14 @@
     <ClInclude Include="include\MutiStateRenderTarget_t.h" />
     <ClInclude Include="include\NodeConnector.hpp" />
     <ClInclude Include="include\NodeManager.hpp" />
-    <ClInclude Include="include\NodeUI.hpp" />
     <ClInclude Include="include\RenderEndpoint_Rect_t.h" />
-    <ClInclude Include="include\UIManager.hpp" />
-    <ClInclude Include="include\Widget.hpp" />
-    <ClInclude Include="include\WidgetHandle.hpp" />
+    <ClInclude Include="include\UIComponent.hpp" />
+    <ClInclude Include="include\UIHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\AudioComponent.cpp" />
     <ClCompile Include="source\AudioManager.cpp" />
-    <ClCompile Include="source\Button.cpp" />
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\NodeUI.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

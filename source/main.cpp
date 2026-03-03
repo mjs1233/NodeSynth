@@ -4,12 +4,8 @@
 #include <iostream>
 #include <print>
 
+#include "UIHandler.hpp"
 #include "Button.hpp"
-#include "NodeUI.hpp"
-#include "Widget.hpp"
-#include "WidgetHandle.hpp"
-#include "UIManager.hpp"
-
 #include "Appstate.hpp"
 
 #include "AudioManager.hpp"
@@ -19,15 +15,9 @@ static SDL_Renderer* renderer = NULL;
 
 static AudioManager* audio;
 
-void test_callback(Button* self, Button::callback_type event_) {}
-
-
-
-
 
 //SDL init callback
-SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
-{
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     SDL_SetAppMetadata("node-synth", "1.0","node-synth_10");
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -46,12 +36,10 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
     state->input_mode = InputMode::SDL_WINDOW;
 
 
-    //button test
-    Button button({ 0,0,100,30 }, test_callback, SDL_Color{ 0xFF,0x00,0x00,0xFF });
-    std::shared_ptr<Button> pButton = std::make_shared<Button>(button);
-    state->ui.addWidget(pButton);
-
-
+    UIHandler<Button> ui;
+    Button button;
+    ui.add(button);
+    ui.add<Button>(1);
 
 
     //pButton->active = false;
@@ -70,8 +58,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 }
 
 //SDL event callback
-SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
-{
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
     Appstate* state = static_cast<Appstate*>(appstate);
     if (event->type == SDL_EVENT_QUIT) {
         return SDL_APP_SUCCESS;
@@ -85,8 +72,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 
 
 //SDL update callback
-SDL_AppResult SDL_AppIterate(void* appstate)
-{
+SDL_AppResult SDL_AppIterate(void* appstate) {
     Appstate* state = static_cast<Appstate*>(appstate);
 
     state->ui.update(state->input);
@@ -105,7 +91,6 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 }
 
 //SDL terminate callback
-void SDL_AppQuit(void* appstate, SDL_AppResult result)
-{
+void SDL_AppQuit(void* appstate, SDL_AppResult result) {
 
 }

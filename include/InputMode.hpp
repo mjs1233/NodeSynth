@@ -1,6 +1,5 @@
 #pragma once
-enum class InputMode
-{
+enum class InputMode {
 	Console,
 	SDL_WINDOW
 };
