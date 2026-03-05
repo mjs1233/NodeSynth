@@ -14,6 +14,7 @@ static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 
 static AudioManager* audio;
+static UIHandler<Button>* ui;
 
 
 //SDL init callback
@@ -35,24 +36,11 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     Appstate* state = static_cast<Appstate*>(*appstate);
     state->input_mode = InputMode::SDL_WINDOW;
 
+    ui = new UIHandler<Button>();
 
-    UIHandler<Button> ui;
-    Button button;
-    ui.add(button);
-    ui.add<Button>(1);
+    
+    ui->add<Button>(SDL_FRect{ 0,0,100,30 }, ui_layer_t::layer_1, SDL_Color{ 0xff,0x00,0x00,0xff }, SDL_Color{ 0x00,0x00,0xff,0xff }, SDL_Color{ 0x00,0xff,0x00,0xff });
 
-
-    //pButton->active = false;
-
-
-
-
-    //node test
-    //NodeUI nodeui;
-    //state.ui.addWidget(std::make_shared<NodeUI>(std::move(nodeui)));
-
-    //audio test
-    audio = new AudioManager(2, 48000);
 
     return SDL_APP_CONTINUE;
 }
@@ -74,14 +62,13 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
 //SDL update callback
 SDL_AppResult SDL_AppIterate(void* appstate) {
     Appstate* state = static_cast<Appstate*>(appstate);
-
-    state->ui.update(state->input);
-
+    ui->update(state->input);
 
     SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
 
-    state->ui.render(renderer);
+    ui->render(renderer);
+
 
     SDL_RenderPresent(renderer);
     //std::print("================\n");

@@ -69,6 +69,12 @@
     <ClInclude Include="include\UIHandler.hpp">
       <Filter>헤더 파일\UI\UserUI</Filter>
     </ClInclude>
+    <ClInclude Include="include\ColorMap.hpp">
+      <Filter>헤더 파일\UI\UserUI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIConfig.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">

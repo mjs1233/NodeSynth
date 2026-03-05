@@ -136,6 +136,7 @@
     <ClInclude Include="include\AudioManager.hpp" />
     <ClInclude Include="include\Button.hpp" />
     <ClInclude Include="include\Button_t.h" />
+    <ClInclude Include="include\ColorMap.hpp" />
     <ClInclude Include="include\Input.hpp" />
     <ClInclude Include="include\InputMode.hpp" />
     <ClInclude Include="include\MutiStateRenderTarget_t.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="include\NodeManager.hpp" />
     <ClInclude Include="include\RenderEndpoint_Rect_t.h" />
     <ClInclude Include="include\UIComponent.hpp" />
+    <ClInclude Include="include\UIConfig.hpp" />
     <ClInclude Include="include\UIHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
