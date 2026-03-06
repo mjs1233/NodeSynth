@@ -3,8 +3,8 @@
 #include <print>
 class Input {
 public:
-	int mouse_x;
-	int mouse_y;
+	int32_t mouse_x;
+	int32_t mouse_y;
 	bool left_mouse_button;
 	bool left_mouse_button_down;
 	bool right_mouse_button;
@@ -22,90 +22,81 @@ public:
 
 		float x, y;
 		SDL_GetMouseState(&x, &y);
-		mouse_x = static_cast<int>(x);
-		mouse_y = static_cast<int>(y);
+		mouse_x = static_cast<int32_t>(x);
+		mouse_y = static_cast<int32_t>(y);
 
 	}
 
 
 
-	void clear_update()
-	{
+	void clear_update() {
+
 		left_mouse_button_down = false;
 		right_mouse_button_down = false;
 
-		for (int i = 0; i < SDL_Scancode::SDL_SCANCODE_COUNT; i++)
+		for (int32_t i = 0; i < SDL_Scancode::SDL_SCANCODE_COUNT; i++)
 		{
 			key_down[i] = false;
 		}
 	}
 
-	void handle_input_event(SDL_Event& event)
-	{
-		if (event.type == SDL_EVENT_KEY_DOWN)
-		{
+	void handle_input_event(SDL_Event& event) {
+
+		if (event.type == SDL_EVENT_KEY_DOWN) {
 			handle_key_down(event);
 		}
-		else if (event.type == SDL_EVENT_KEY_UP)
-		{
+		else if (event.type == SDL_EVENT_KEY_UP) {
 			handle_key_up(event);
 		}
-		else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
-		{
+		else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
 			handle_mouse_down(event);
 		}
-		else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP)
-		{
+		else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP) {
 			handle_mouse_up(event);
 		}
-		else if (event.type == SDL_EVENT_MOUSE_MOTION)
-		{
+		else if (event.type == SDL_EVENT_MOUSE_MOTION) {
 			handle_mouse_motion(event);
 		}
 	}
 
 private:
-	void handle_mouse_down(SDL_Event& event)
-	{
-		if (event.button.button == SDL_BUTTON_LEFT)
-		{
+	void handle_mouse_down(SDL_Event& event) {
+
+		if (event.button.button == SDL_BUTTON_LEFT) {
 			left_mouse_button = true;
 			left_mouse_button_down = true;
 		}
-		else if (event.button.button == SDL_BUTTON_RIGHT)
-		{
+		else if (event.button.button == SDL_BUTTON_RIGHT) {
 			right_mouse_button = true;
 			right_mouse_button_down = true;
 		}
 	}
 
-	void handle_mouse_up(SDL_Event& event)
-	{
-		if (event.button.button == SDL_BUTTON_LEFT)
-		{
+	void handle_mouse_up(SDL_Event& event) {
+
+		if (event.button.button == SDL_BUTTON_LEFT) {
 			left_mouse_button = false;
 		}
-		else if (event.button.button == SDL_BUTTON_RIGHT)
-		{
+		else if (event.button.button == SDL_BUTTON_RIGHT) {
 			right_mouse_button = false;
 		}
 	}
 
-	void handle_key_down(SDL_Event& event)
-	{
+	void handle_key_down(SDL_Event& event) {
+
 		key_state[event.key.scancode] = true;
 		key_down[event.key.scancode] = true;
 	}
 
-	void handle_key_up(SDL_Event& event)
-	{
+	void handle_key_up(SDL_Event& event) {
+
 		key_state[event.key.scancode] = false;
 	}
 
-	void handle_mouse_motion(SDL_Event& event)
-	{
-		mouse_x = static_cast<int>(event.motion.x);
-		mouse_y = static_cast<int>(event.motion.y);
+	void handle_mouse_motion(SDL_Event& event) {
+
+		mouse_x = static_cast<int32_t>(event.motion.x);
+		mouse_y = static_cast<int32_t>(event.motion.y);
 		//std::print("{} {}\n", mouse_x, mouse_y);
 	}
 };

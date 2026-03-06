@@ -48,31 +48,25 @@
     <ClInclude Include="include\AudioManager.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
-    <ClInclude Include="include\AudioComponent.hpp">
-      <Filter>헤더 파일\AudioSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AudioComponentHandle.hpp">
-      <Filter>헤더 파일\AudioSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="include\NodeManager.hpp">
-      <Filter>헤더 파일\AudioSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="include\NodeConnector.hpp">
-      <Filter>헤더 파일\AudioSystem</Filter>
-    </ClInclude>
     <ClInclude Include="include\UIComponent.hpp">
       <Filter>헤더 파일\UI</Filter>
     </ClInclude>
     <ClInclude Include="include\Button.hpp">
       <Filter>헤더 파일\UI</Filter>
     </ClInclude>
-    <ClInclude Include="include\UIHandler.hpp">
-      <Filter>헤더 파일\UI\UserUI</Filter>
-    </ClInclude>
     <ClInclude Include="include\ColorMap.hpp">
       <Filter>헤더 파일\UI\UserUI</Filter>
     </ClInclude>
     <ClInclude Include="include\UIConfig.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIHandler.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NodeUI.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Rect.hpp">
       <Filter>헤더 파일\UI</Filter>
     </ClInclude>
   </ItemGroup>

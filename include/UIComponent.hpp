@@ -11,11 +11,18 @@
 #include "UIConfig.hpp"
 
 template <typename T>
-concept RenderableUI =
+concept Drawable =
 std::default_initializable<T> &&
-	requires () {
-		{ std::declval<T>().update(std::declval<Input&>()) } -> std::same_as<void>;
-		{ std::declval<T>().state() } -> std::same_as<ui_state_t>;
+	requires {
 		{ std::declval<T>().layer() } -> std::same_as<ui_layer_t>;
 		{ std::declval<T>().render(std::declval<SDL_Renderer*>()) } -> std::same_as<uint32_t>;
+};
+
+template <typename T>
+concept UIComponent =
+std::default_initializable<T> 
+&& Drawable<T>
+&& requires () {
+		{ std::declval<T>().update(std::declval<Input&>()) } -> std::same_as<void>;
+		{ std::declval<T>().state() } -> std::same_as<ui_state_t>;
 };

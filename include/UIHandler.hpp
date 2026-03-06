@@ -10,11 +10,11 @@
 #include <SDL3/SDL.h>
 #include "UIComponent.hpp"
 
-template <RenderableUI ...renderable_ui_t>
+template <UIComponent ...ui_component_t>
 class UIHandler
 {
 public:
-	std::tuple<std::deque<renderable_ui_t>...> ui_lists;
+	std::tuple<std::deque<ui_component_t>...> ui_lists;
 
 private:
 
@@ -24,25 +24,41 @@ public:
 	}
 
 
-	template <RenderableUI T>
-	requires (std::is_same<renderable_ui_t, T>::value || ...)
+	template <UIComponent T>
+	requires (std::is_same<ui_component_t, T>::value || ...)
 	void add(T& ui) {
 		std::get<std::deque<T>>(ui_lists).push_back(ui);
 	}
 
-	template<RenderableUI T, typename ...Args>
-	requires (std::is_same<renderable_ui_t, T>::value || ...) && std::constructible_from<T,Args...>
-	void add(Args&& ...args) {
+	template<UIComponent T, typename ...Args>
+	requires (std::is_same<ui_component_t, T>::value || ...) && std::constructible_from<T,Args...>
+	size_t add(Args&& ...args) {
+
+		std::print("CALL ADD2\n");
 		std::get<std::deque<T>>(ui_lists).emplace_back(std::forward<Args>(args)...);
+		return std::get<std::deque<T>>(ui_lists).size() - 1;
 	}
 
 	void update(Input& input) {
-		update_all(std::index_sequence_for<renderable_ui_t...>{},input);
+		update_all(std::index_sequence_for<ui_component_t...>{},input);
 	}
 
 	void render(SDL_Renderer* renderer) {
-		render_all(std::index_sequence_for<renderable_ui_t...>{}, renderer);
+		render_all(std::index_sequence_for<ui_component_t...>{}, renderer);
 	}
+
+	template <UIComponent T>
+	requires (std::is_same<ui_component_t, T>::value || ...)
+	T& get(size_t idx) {
+		return std::get<std::deque<T>>(ui_lists)[idx];
+	}
+
+	template <UIComponent T>
+	requires (std::is_same<ui_component_t, T>::value || ...)
+	void clear() {
+		std::get<std::deque<T>>(ui_lists).clear();
+	}
+
 
 private:
 	template<std::size_t... Is>
@@ -69,8 +85,14 @@ private:
 		}
 	}
 
-
-	void clear() {
-
+	template <std::size_t... ls>
+	void clear_all(std::index_sequence<ls...>) {
+		(clear_deque(std::get<ls>(ui_lists)), ...);
 	}
+
+	template <typename T>
+	void clear_deque(std::deque<T>& target) {
+		target.clear();
+	}
+
 };

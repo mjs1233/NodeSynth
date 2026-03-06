@@ -14,7 +14,7 @@ static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 
 static AudioManager* audio;
-static UIHandler<Button>* ui;
+static UIHandler<Button<Rect>>* ui;
 
 
 //SDL init callback
@@ -36,12 +36,12 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     Appstate* state = static_cast<Appstate*>(*appstate);
     state->input_mode = InputMode::SDL_WINDOW;
 
-    ui = new UIHandler<Button>();
+    ui = new UIHandler<Button<Rect>>();
 
     
-    ui->add<Button>(SDL_FRect{ 0,0,100,30 }, ui_layer_t::layer_1, SDL_Color{ 0xff,0x00,0x00,0xff }, SDL_Color{ 0x00,0x00,0xff,0xff }, SDL_Color{ 0x00,0xff,0x00,0xff });
-
-
+    size_t id = ui->add<Button<Rect>>(SDL_FRect{ 0,0,100,30 }, ui_layer_t::layer_1, Rect());
+    std::cout << id << "<<<<<<\n";
+    ui->get<Button<Rect>>(id).rect = SDL_FRect{0,0,100,100};
     return SDL_APP_CONTINUE;
 }
 

@@ -21,9 +21,9 @@ public:
 	struct state_code
 	{
 	public:
-		int idle;
-		int hover;
-		int clicked;
+		int32_t idle;
+		int32_t hover;
+		int32_t clicked;
 
 		state_code()
 		{
@@ -45,7 +45,7 @@ public:
 	render_target_t render_target;
 
 private:
-	int state;
+	int32_t state;
 	state_code state_code_;
 	bool mouse_button_down = false;
 

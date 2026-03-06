@@ -1,14 +1,12 @@
 #pragma once
 #include "InputMode.hpp"
 #include "Input.hpp"
-class Appstate
-{
+class Appstate {
 public:
 	Input input;
 	InputMode input_mode;
 public:
-	Appstate()
-	{
+	Appstate() {
 		input = Input();
 		input_mode = InputMode::Console;
 	}
