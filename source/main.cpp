@@ -10,12 +10,14 @@
 #include "Appstate.hpp"
 
 #include "AudioManager.hpp"
+#include "AudioSystem.hpp"
+#include "Delay.hpp"
 #include "CircularQueue.hpp"
 
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
 
-static AudioManager<>* audio = nullptr;
+static AudioManager* audio = nullptr;
 static UIHandler* ui = nullptr;
 
 
@@ -39,10 +41,13 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     state->input_mode = InputMode::SDL_WINDOW;
 
     ui = new UIHandler();
-
+    
     //sample code (Button w/ Rect UI)
     size_t id = ui->add<Button<Rect>>(SDL_FRect{ 0,0,100,30 }, ui_layer_t::layer_1, Rect());
     ui->get<Button<Rect>>(id).rect = SDL_FRect{0,0,100,100};
+    
+    audio = new AudioManager();
+    //audio->add();
 
     return SDL_APP_CONTINUE;
 }

@@ -32,7 +32,7 @@ public:
             return L + 1 - front_idx + rear_idx;
         }
 
-        return rear_idx - front;
+        return rear_idx - front_idx;
     }
 
     void push(T value) {

@@ -132,6 +132,8 @@
   <ItemGroup>
     <ClInclude Include="include\Appstate.hpp" />
     <ClInclude Include="include\AudioManager.hpp" />
+    <ClInclude Include="include\AudioSystem.hpp" />
+    <ClInclude Include="include\ConfigData.hpp" />
     <ClInclude Include="include\Button.hpp" />
     <ClInclude Include="include\Button_t.h" />
     <ClInclude Include="include\CircularQueue.hpp" />
@@ -150,8 +152,8 @@
     <ClInclude Include="include\UIHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\AudioComponent.cpp" />
-    <ClCompile Include="source\AudioManager.cpp" />
+    <ClCompile Include="source\Button.cpp" />
+    <ClCompile Include="Source\Delay.cpp" />
     <ClCompile Include="source\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -14,7 +14,7 @@ static void SDLCALL AudioCallback(void* user_data, SDL_AudioStream* audio_stream
 
 
 template <AudioProcessNode ...processnode>
-class AudioManager
+class AudioManagerBase
 {
 public:
 
@@ -22,13 +22,14 @@ private:
 	std::vector<float> audio_buffer;
 	SDL_AudioStream* stream;
 	SDL_AudioSpec audio_spec;
-	std::tuple<processnode...> nodes;
+	std::tuple<std::deque<processnode...>> nodes;
 
 public:
 
-	AudioManager() : stream(nullptr) {}
+	AudioManagerBase() : stream(nullptr) {}
 
-	AudioManager(uint32_t channel, uint32_t sample_rate) {
+	AudioManagerBase(uint32_t channel, uint32_t sample_rate) {
+
 		if (!SDL_Init(SDL_INIT_AUDIO)) {
 			std::print("error init sdl audio subsystem : {}", SDL_GetError());
 			exit(1);
@@ -45,13 +46,19 @@ public:
 		}
 		SDL_ResumeAudioStreamDevice(stream);
 	}
+	
+	template<AudioProcessNode T, typename ...Args>
+	requires (std::is_same<processnode, T>::value || ...) && std::constructible_from<T, Args...>
+	void add_node(Args&& ...args) {
+		std::get<T>(nodes).emplace_back(std::forward<Args>(args)...);
+	}
 
-	void update(int additional_amount, int total_amount) {
+	void audio_update(int additional_amount, int total_amount) {
 		std::print("add: {} tot: {}\n", additional_amount, total_amount);
 	}
 };
 
 template <AudioProcessNode ...processnode>
 static void __cdecl AudioCallback(void* user_data, SDL_AudioStream* audio_stream, int additional_amount, int total_amount) {
-	reinterpret_cast<AudioManager<processnode...>*>(user_data)->update(additional_amount,total_amount);
+	reinterpret_cast<AudioManagerBase<processnode...>*>(user_data)->audio_update(additional_amount,total_amount);
 }

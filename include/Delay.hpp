@@ -1,5 +1,6 @@
 #pragma once
 #include <queue>
+#include <optional>
 
 #include "UI.hpp"
 #include "CircularQueue.hpp"
@@ -8,6 +9,7 @@
 namespace AudioProcessor {
 
 	//AudioProcessorNode
+	//exposition only
 	class Delay {
 
 	private:
@@ -18,43 +20,25 @@ namespace AudioProcessor {
 		CircularQueue<float, 2000 * 48000> delay_line;
 
 		const uint32_t max_delay_time_ms = 1000;
-		size_t delay_sample_count = 500;
-		std::queue<float> buffer;
+		size_t delay_sample_count;
+
+		float mix = 0;
 
 	public:
-		Delay(size_t id, UIHandler& ui) : id(id) {
+		Delay(size_t id, UIHandler& ui);
 
-			ui_id = ui.add<NodeUI>(ui_state_t::active, ui_layer_t::layer_1);
-			
-			
-		}
+		void process(const std::vector<float>& in, std::vector<float>& out);
 
-		void process(const std::vector<float>& in, std::vector<float>& out) {
+		size_t config_count();
+		std::optional<ConfigData> config_data(const uint32_t config_id);
+		void update(const uint32_t config_id, const std::variant<int32_t, bool, float>& value);
 
-			while (delay_sample_count < delay_line.size()) {
-				delay_line.pop();
-			}
+		std::vector<uint32_t>& next();
 
-			for (size_t idx = 0; idx < in.size(); idx++) {
+	private:
+		void edit_delay_time(uint32_t time/*ms*/);
+		void edit_mix_ratio(float ratio);
 
-				delay_line.push(in[idx]);
-
-				if (delay_sample_count <= delay_line.size()) {
-					out[idx] = delay_line.front();
-					delay_line.pop();
-				}
-			}
-		}
-
-		void edit_delay_time(uint32_t time/*ms*/) {
-			if (time < max_delay_time_ms) {
-				delay_sample_count = static_cast<uint32_t>(static_cast<float>(time) / 1000.f * 48000.f);
-			}
-		}
-
-		std::vector<uint32_t>& get_next() {
-			return next_node;
-		}
 	};
 
 

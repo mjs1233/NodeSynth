@@ -81,15 +81,21 @@
     <ClInclude Include="include\CircularQueue.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="include\ConfigData.hpp">
+      <Filter>헤더 파일\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AudioSystem.hpp">
+      <Filter>헤더 파일\AudioSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="source\AudioManager.cpp">
+    <ClCompile Include="Source\Delay.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="source\AudioComponent.cpp">
+    <ClCompile Include="source\Button.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
