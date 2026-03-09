@@ -11,7 +11,7 @@
 #include "UIComponent.hpp"
 
 template <UIComponent ...ui_component_t>
-class UIHandler
+class UIHandlerBase
 {
 public:
 	std::tuple<std::deque<ui_component_t>...> ui_lists;
@@ -19,7 +19,7 @@ public:
 private:
 
 public:
-	UIHandler() {
+	UIHandlerBase() {
 
 	}
 
@@ -34,7 +34,6 @@ public:
 	requires (std::is_same<ui_component_t, T>::value || ...) && std::constructible_from<T,Args...>
 	size_t add(Args&& ...args) {
 
-		std::print("CALL ADD2\n");
 		std::get<std::deque<T>>(ui_lists).emplace_back(std::forward<Args>(args)...);
 		return std::get<std::deque<T>>(ui_lists).size() - 1;
 	}

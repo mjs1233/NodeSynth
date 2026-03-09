@@ -69,6 +69,18 @@
     <ClInclude Include="include\Rect.hpp">
       <Filter>헤더 파일\UI</Filter>
     </ClInclude>
+    <ClInclude Include="include\ProcessorNode.hpp">
+      <Filter>헤더 파일\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Delay.hpp">
+      <Filter>헤더 파일\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CircularQueue.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">

@@ -20,8 +20,7 @@ std::default_initializable<T> &&
 
 template <typename T>
 concept UIComponent =
-std::default_initializable<T> 
-&& Drawable<T>
+Drawable<T>
 && requires () {
 		{ std::declval<T>().update(std::declval<Input&>()) } -> std::same_as<void>;
 		{ std::declval<T>().state() } -> std::same_as<ui_state_t>;

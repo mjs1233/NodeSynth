@@ -3,18 +3,20 @@
 #include <SDL3/SDL_main.h>
 #include <iostream>
 #include <print>
+#include <optional>
 
-#include "UIHandler.hpp"
-#include "Button.hpp"
+
+#include "UI.hpp"
 #include "Appstate.hpp"
 
 #include "AudioManager.hpp"
+#include "CircularQueue.hpp"
 
-static SDL_Window* window = NULL;
-static SDL_Renderer* renderer = NULL;
+static SDL_Window* window = nullptr;
+static SDL_Renderer* renderer = nullptr;
 
-static AudioManager* audio;
-static UIHandler<Button<Rect>>* ui;
+static AudioManager<>* audio = nullptr;
+static UIHandler* ui = nullptr;
 
 
 //SDL init callback
@@ -36,12 +38,12 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     Appstate* state = static_cast<Appstate*>(*appstate);
     state->input_mode = InputMode::SDL_WINDOW;
 
-    ui = new UIHandler<Button<Rect>>();
+    ui = new UIHandler();
 
-    
+    //sample code (Button w/ Rect UI)
     size_t id = ui->add<Button<Rect>>(SDL_FRect{ 0,0,100,30 }, ui_layer_t::layer_1, Rect());
-    std::cout << id << "<<<<<<\n";
     ui->get<Button<Rect>>(id).rect = SDL_FRect{0,0,100,100};
+
     return SDL_APP_CONTINUE;
 }
 

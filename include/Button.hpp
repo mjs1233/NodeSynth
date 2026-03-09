@@ -11,16 +11,14 @@ template <Drawable drawable_t>
 class Button
 {
 private:
-	enum class render_state_t
-	{
+	enum class render_state_t {
 		idle,
 		hover,
 		click
 	};
 
 public:
-	enum class event_type_t
-	{
+	enum class event_type_t {
 		click
 	};
 

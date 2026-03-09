@@ -16,7 +16,7 @@ public:
 	ui_layer_t layer() { return ui_layer; }
 
 	uint32_t render(SDL_Renderer* renderer) {
-		std::print("RENDER RECT\n");
+
 		return 0;
 	}
 };
