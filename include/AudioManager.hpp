@@ -17,16 +17,32 @@ template <AudioProcessNode ...processnode>
 class AudioManagerBase
 {
 public:
+private:
+	enum class mode_type {
+		edit,
+		connect,
+		play,
+		probe
+		
+	};
+
+
+public:
 
 private:
 	std::vector<float> audio_buffer;
 	SDL_AudioStream* stream;
 	SDL_AudioSpec audio_spec;
 	std::tuple<std::deque<processnode...>> nodes;
-
+	mode_type mode;
+	
 public:
 
-	AudioManagerBase() : stream(nullptr) {}
+	AudioManagerBase() : 
+		stream(nullptr),
+		mode(mode_type::play){
+	
+	}
 
 	AudioManagerBase(uint32_t channel, uint32_t sample_rate) {
 
@@ -49,8 +65,27 @@ public:
 	
 	template<AudioProcessNode T, typename ...Args>
 	requires (std::is_same<processnode, T>::value || ...) && std::constructible_from<T, Args...>
-	void add_node(Args&& ...args) {
-		std::get<T>(nodes).emplace_back(std::forward<Args>(args)...);
+	size_t add(Args&& ...args) {
+		std::get< std::deque<T>>(nodes).emplace_back(std::forward<Args>(args)...);
+		return std::get<std::deque<T>>(nodes).size() - 1;
+	}
+	
+	template<AudioProcessNode T>
+	T& get(size_t id) {
+		return std::get<std::deque<T>>(nodes)[id];
+	}
+
+	void ui_update() {
+
+		if (mode == mode_type::connect) {
+
+		}
+
+		std::apply([&](auto& node) {
+
+
+			},
+			nodes);
 	}
 
 	void audio_update(int additional_amount, int total_amount) {

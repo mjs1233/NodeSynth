@@ -25,6 +25,9 @@
     <Filter Include="헤더 파일\AudioSystem">
       <UniqueIdentifier>{49ddf7b0-f729-47e5-98bc-8fd08dacb19f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\imgui">
+      <UniqueIdentifier>{dfe2d4da-00be-4aac-ab7b-bbb6a48a4c7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Appstate.hpp">
@@ -87,6 +90,24 @@
     <ClInclude Include="include\AudioSystem.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
+    <ClInclude Include="include\Font.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DropDownUI.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NodeUIHandler.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Text.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GlobalConfig.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\App.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">
@@ -97,6 +118,27 @@
     </ClCompile>
     <ClCompile Include="source\Button.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="_3rd_party\imgui\imgui.cpp">
+      <Filter>소스 파일\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="_3rd_party\imgui\imgui_demo.cpp">
+      <Filter>소스 파일\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="_3rd_party\imgui\imgui_draw.cpp">
+      <Filter>소스 파일\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="_3rd_party\imgui\imgui_impl_sdl3.cpp">
+      <Filter>소스 파일\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="_3rd_party\imgui\imgui_impl_sdlrenderer3.cpp">
+      <Filter>소스 파일\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="_3rd_party\imgui\imgui_tables.cpp">
+      <Filter>소스 파일\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="_3rd_party\imgui\imgui_widgets.cpp">
+      <Filter>소스 파일\imgui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

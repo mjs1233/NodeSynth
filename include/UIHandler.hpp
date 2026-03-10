@@ -8,6 +8,7 @@
 #include <tuple>
 #include <optional>
 #include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include "UIComponent.hpp"
 
 template <UIComponent ...ui_component_t>
@@ -80,7 +81,7 @@ private:
 	template <typename T>
 	void render_deque(std::deque<T>& target, SDL_Renderer* renderer) {
 		for (auto& ui : target) {
-			ui.render(renderer);
+			ui.render(renderer,0,0);
 		}
 	}
 
