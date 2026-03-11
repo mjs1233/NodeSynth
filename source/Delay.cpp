@@ -3,9 +3,8 @@
 
 namespace AudioProcessor {
 
-	Delay::Delay(UIHandler& ui) : delay_sample_count(10) {
+	Delay::Delay() : delay_sample_count(10) {
 
-		ui_id = ui.add<NodeUI>(2,0,ui_state_t::active, ui_layer_t::layer_1);
 
 
 	}

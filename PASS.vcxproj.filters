@@ -33,53 +33,14 @@
     <ClInclude Include="include\Appstate.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="include\Input.hpp">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\InputMode.hpp">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Button_t.h">
-      <Filter>헤더 파일\UI\UserUI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\RenderEndpoint_Rect_t.h">
-      <Filter>헤더 파일\UI\UserUI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MutiStateRenderTarget_t.h">
-      <Filter>헤더 파일\UI\UserUI</Filter>
-    </ClInclude>
     <ClInclude Include="include\AudioManager.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UIComponent.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Button.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ColorMap.hpp">
-      <Filter>헤더 파일\UI\UserUI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UIConfig.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UIHandler.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\NodeUI.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Rect.hpp">
-      <Filter>헤더 파일\UI</Filter>
     </ClInclude>
     <ClInclude Include="include\ProcessorNode.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
     <ClInclude Include="include\Delay.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI.hpp">
-      <Filter>헤더 파일\UI</Filter>
     </ClInclude>
     <ClInclude Include="include\CircularQueue.hpp">
       <Filter>헤더 파일</Filter>
@@ -90,23 +51,20 @@
     <ClInclude Include="include\AudioSystem.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
-    <ClInclude Include="include\Font.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DropDownUI.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\NodeUIHandler.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Text.hpp">
-      <Filter>헤더 파일\UI</Filter>
-    </ClInclude>
     <ClInclude Include="include\GlobalConfig.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="include\App.hpp">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scene.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EditorScene.hpp">
+      <Filter>헤더 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneHandler.hpp">
+      <Filter>헤더 파일\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="_3rd_party\imgui\imgui_widgets.cpp">
       <Filter>소스 파일\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\App.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

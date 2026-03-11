@@ -132,34 +132,35 @@
   <ItemGroup>
     <ClInclude Include="include\App.hpp" />
     <ClInclude Include="include\Appstate.hpp" />
-    <ClInclude Include="include\AudioManager.hpp" />
-    <ClInclude Include="include\AudioSystem.hpp" />
-    <ClInclude Include="include\ConfigData.hpp" />
-    <ClInclude Include="include\Button.hpp" />
-    <ClInclude Include="include\Button_t.h" />
+    <ClInclude Include="include\AudioManager.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="include\AudioSystem.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="include\ConfigData.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="include\CircularQueue.hpp" />
-    <ClInclude Include="include\ColorMap.hpp" />
-    <ClInclude Include="include\Delay.hpp" />
-    <ClInclude Include="include\DropDownUI.hpp" />
-    <ClInclude Include="include\Font.hpp" />
+    <ClInclude Include="include\Delay.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="include\EditorScene.hpp" />
     <ClInclude Include="include\GlobalConfig.hpp" />
-    <ClInclude Include="include\Input.hpp" />
-    <ClInclude Include="include\InputMode.hpp" />
-    <ClInclude Include="include\MutiStateRenderTarget_t.h" />
-    <ClInclude Include="include\NodeUI.hpp" />
-    <ClInclude Include="include\NodeUIHandler.hpp" />
-    <ClInclude Include="include\ProcessorNode.hpp" />
-    <ClInclude Include="include\Rect.hpp" />
-    <ClInclude Include="include\RenderEndpoint_Rect_t.h" />
-    <ClInclude Include="include\Text.hpp" />
-    <ClInclude Include="include\UI.hpp" />
-    <ClInclude Include="include\UIComponent.hpp" />
-    <ClInclude Include="include\UIConfig.hpp" />
-    <ClInclude Include="include\UIHandler.hpp" />
+    <ClInclude Include="include\ProcessorNode.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="include\Scene.hpp" />
+    <ClInclude Include="include\SceneHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Button.cpp" />
-    <ClCompile Include="Source\Delay.cpp" />
+    <ClCompile Include="source\App.cpp" />
+    <ClCompile Include="source\Button.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Source\Delay.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="_3rd_party\imgui\imgui.cpp" />
     <ClCompile Include="_3rd_party\imgui\imgui_demo.cpp" />

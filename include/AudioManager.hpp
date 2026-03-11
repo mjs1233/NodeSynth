@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include <print>
+#include <deque>
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_audio.h>
@@ -66,7 +67,7 @@ public:
 	template<AudioProcessNode T, typename ...Args>
 	requires (std::is_same<processnode, T>::value || ...) && std::constructible_from<T, Args...>
 	size_t add(Args&& ...args) {
-		std::get< std::deque<T>>(nodes).emplace_back(std::forward<Args>(args)...);
+		std::get<std::deque<T>>(nodes).emplace_back(std::forward<Args>(args)...);
 		return std::get<std::deque<T>>(nodes).size() - 1;
 	}
 	
@@ -77,15 +78,7 @@ public:
 
 	void ui_update() {
 
-		if (mode == mode_type::connect) {
 
-		}
-
-		std::apply([&](auto& node) {
-
-
-			},
-			nodes);
 	}
 
 	void audio_update(int additional_amount, int total_amount) {

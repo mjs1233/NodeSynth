@@ -25,7 +25,7 @@ namespace AudioProcessor {
 		float mix = 0;
 
 	public:
-		Delay(UIHandler& ui);
+		Delay();
 
 		void process(const std::vector<float>& in, std::vector<float>& out);
 
