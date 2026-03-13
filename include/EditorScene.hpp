@@ -8,12 +8,12 @@
 class EditorScene : public SceneBase {
 
 private:
-	AudioManager audio_manager;
+	//AudioManager audio_manager;
 
 
 public:
 
-	EditorScene() : audio_manager(AudioManager(2,48000)) {
+	EditorScene()  {//audio_manager(AudioManager(2,48000)) {
 
 
 	}
@@ -22,7 +22,6 @@ public:
         
         
         update_topbar();
-
 
 	}
 
@@ -33,32 +32,36 @@ public:
 private:
 	void update_topbar() {
 
-        if (ImGui::BeginMainMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                if (ImGui::MenuItem("New", "Ctrl+N"))
-                {
-                    // New 처리
+        if (ImGui::BeginMainMenuBar()) {
+
+            if (ImGui::BeginMenu("File")) {
+
+                if (ImGui::MenuItem("New")) {
+
                 }
-                if (ImGui::MenuItem("Open", "Ctrl+O"))
-                {
-                    // Open 처리
+                if (ImGui::MenuItem("Open")) {
+
                 }
-                if (ImGui::MenuItem("Save", "Ctrl+S"))
-                {
-                    // Save 처리
+                if (ImGui::MenuItem("Save")) {
+
                 }
+
                 ImGui::Separator();
-                if (ImGui::MenuItem("Exit"))
-                {
-                    // 종료 처리
+
+                if (ImGui::MenuItem("Exit")) {
+
                 }
+
                 ImGui::EndMenu();
             }
         }
         ImGui::EndMainMenuBar();
 
 	}
+
+    void update_node() {
+
+        //audio_manager.ui_update();
+    }
 
 };

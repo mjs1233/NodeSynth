@@ -152,12 +152,10 @@
     </ClInclude>
     <ClInclude Include="include\Scene.hpp" />
     <ClInclude Include="include\SceneHandler.hpp" />
+    <ClInclude Include="include\TMP_tuple_gen.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\App.cpp" />
-    <ClCompile Include="source\Button.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Source\Delay.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>

@@ -19,8 +19,8 @@ public:
 		scene->update(this);
 	}
 	
-	template <typename T, typename ...Args>
-	requires SceneTrait<T>
+	template <SceneTrait T, typename ...Args>
+	requires std::is_constructible<T, Args...>::value
 	void change(Args&& ...args) {
 
 		scene = std::make_shared<T>(std::forward<Args>(args)...);

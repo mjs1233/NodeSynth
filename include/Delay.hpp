@@ -2,7 +2,6 @@
 #include <queue>
 #include <optional>
 
-#include "UI.hpp"
 #include "CircularQueue.hpp"
 #include "ProcessorNode.hpp"
 
@@ -29,8 +28,6 @@ namespace AudioProcessor {
 
 		void process(const std::vector<float>& in, std::vector<float>& out);
 
-		size_t config_count();
-		std::optional<ConfigData> config_data(const uint32_t config_id);
 		void update(const uint32_t config_id, const std::variant<int32_t, bool, float>& value);
 
 		std::vector<uint32_t>& next();
