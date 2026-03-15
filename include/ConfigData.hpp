@@ -10,11 +10,10 @@ class ConfigData {
 
 public:
 	enum class data_type {
-		_int,
-		_bool,
+		_trigger,
 		_float,
 		_float01,
-		_float_array
+		_real_time_sample
 	};
 
 	ConfigData(uint32_t id, const std::string& name, data_type type) :

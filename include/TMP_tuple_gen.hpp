@@ -19,12 +19,4 @@ namespace TMP {
 	};
 }
 
-
-class xX {
-
-};
-
-void a() {
-
-	TMP::tuple_gen<3, xX>::type PP;
-}
+//TMP::tuple_gen<3, xX>::type

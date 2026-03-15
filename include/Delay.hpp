@@ -9,28 +9,33 @@ namespace AudioProcessor {
 
 	//AudioProcessorNode
 	//exposition only
-	class Delay {
+	class Delay : public ProcessNodeBase {
 
 	private:
-		std::vector<uint32_t> next_node;
-		size_t id;
-		size_t ui_id;
+		enum class InputID_t : uint32_t {
+			sample = 0,
+			mix = 1,
+			delay_ms = 2
+		};
 
-		CircularQueue<float, 2000 * 48000> delay_line;
+		CircularQueue<float> delay_line;
 
 		const uint32_t max_delay_time_ms = 1000;
 		size_t delay_sample_count;
 
 		float mix = 0;
+		std::vector<float> input_samples;
+
+
 
 	public:
 		Delay();
 
-		void process(const std::vector<float>& in, std::vector<float>& out);
+		using output_container = realtime_sample_output;
 
-		void update(const uint32_t config_id, const std::variant<int32_t, bool, float>& value);
-
-		std::vector<uint32_t>& next();
+		virtual void input_connection_data(ConfigData& config_data) override;
+		virtual void input(const data_variant& input, uint32_t input_id_num)override;
+		virtual void process(data_variant& output) override;
 
 	private:
 		void edit_delay_time(uint32_t time/*ms*/);

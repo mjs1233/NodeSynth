@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include <print>
+#include <queue>
 #include <deque>
 
 #include <SDL3/SDL.h>
@@ -11,12 +12,12 @@
 #include "ProcessorNode.hpp"
 #include "TMP_tuple_gen.hpp"
 
-template<typename ...output_containers>
+template <typename ...output_container>
 static void SDLCALL AudioCallback(void* user_data, SDL_AudioStream* audio_stream, int additional_amount, int total_amount);
 
 
-template <typename ...output_containers> 
-class AudioManager {
+template <typename ...output_container>
+class AudioManager_t {
 public:
 private:
 	enum class mode_type {
@@ -41,14 +42,14 @@ private:
 
 public:
 
-	AudioManager() : 
+	AudioManager_t() : 
 		stream(nullptr),
 		mode(mode_type::play){
 	
 	}
 
 
-	AudioManager(uint32_t channel, uint32_t sample_rate) {
+	AudioManager_t(uint32_t channel, uint32_t sample_rate) {
 
 		if (!SDL_Init(SDL_INIT_AUDIO)) {
 			std::print("error init sdl audio subsystem : {}", SDL_GetError());
@@ -59,7 +60,12 @@ public:
 		audio_spec.channels = channel;
 		audio_spec.freq = sample_rate;
 
-		stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audio_spec, AudioCallback<output_containers...>, this);
+		stream = SDL_OpenAudioDeviceStream(
+			SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, 
+			&audio_spec, 
+			AudioCallback<output_container...>, 
+			this
+		);
 		
 		if (!stream) {
 			std::print("error open audio device stream : {}", SDL_GetError());
@@ -70,10 +76,11 @@ public:
 
 	template <ProcessNodeTrait T, typename ...Args>
 	requires std::is_constructible<T,Args...>::value 
-	&& (std::is_same<typename T::ouput_tag,output_containers>::value || ... )
+	&& (std::is_same<typename T::ouput_tag,output_container>::value || ... )
 	size_t add(Args&& ...args) {
 
 		nodes.push_back(std::make_shared<T>(std::forward<Args>(args)...));
+		nodes[nodes.size() - 1]->set_id(nodes.size() - 1);
 		//TODO) add advanced id management system
 		return nodes.size() - 1;
 	}
@@ -90,10 +97,21 @@ public:
 		return std::static_pointer_cast<T>(nodes[idx]);
 	}
 
+	std::optional<std::shared_ptr<ProcessNodeBase>> get_base(size_t idx) {
 
+		if (idx >= nodes.size())
+			return std::nullopt;
+
+		if (nodes[idx] == nullptr)
+			return std::nullopt;
+
+		return nodes[idx];
+	}
 
 	void update_node() {
 		
+		std::vector<uint32_t> update_seq;
+		calc_node_update_seq(update_seq);
 	}
 	
 
@@ -108,18 +126,103 @@ public:
 
 private:
 
-	void calc_node_update_seq() {
 
-		//find roots
-		for (const auto& node : nodes) {
+	//need T::push_back()-able container
+	template<typename T>
+	requires std::same_as<typename std::remove_cvref_t<T>::value_type, uint32_t>
+	void calc_node_update_seq(T& container) {
+		
+		std::queue<uint32_t> start_nodes;
+		find_start_nodes(start_nodes);
 
+		std::queue<uint32_t> next_nodes;
+
+		std::vector<int32_t> ref_counts;
+		make_ref_count_list(ref_counts);
+
+		while(!start_nodes.empty()) {
+			
+			std::optional<std::shared_ptr<ProcessNodeBase>> base_ptr = get_base(start_nodes.front());
+			if (!base_ptr.has_value())
+				continue;
+
+			const std::vector<uint32_t>& connected_nodes = base_ptr.value()->next();
+			
+			for (const auto& conn_node : connected_nodes) {
+				
+				std::optional<std::shared_ptr<ProcessNodeBase>> conn_ptr = get_base(conn_node);
+				if (!conn_ptr.has_value())
+					continue;
+
+				next_nodes.push(conn_ptr.value()->id());
+			}
 		}
 
+		while (!next_nodes.empty()) {
+			uint32_t front_id = next_nodes.front();
+
+			ref_counts[front_id]--;
+			if (ref_counts[front_id] == 0) {
+
+				std::optional<std::shared_ptr<ProcessNodeBase>> base_ptr = get_base(front_id);
+				if (!base_ptr.has_value())
+					continue;
+
+				for (const auto& next : base_ptr.value()->next()) {
+
+					next_nodes.push(next);
+				}
+
+				container.push_back(front_id);
+			}
+		}
+		
+	}
+
+	void make_ref_count_list(std::vector<int32_t>& container) {
+
+		container.resize(nodes.size());
+
+		for (uint32_t idx = 0; idx < nodes.size(); idx++) {
+
+			if (nodes[idx] == nullptr) {
+				container[idx] = 0;
+				continue;
+			}
+
+			//for advanced id system
+			container[nodes[idx]->id()] = nodes[idx]->ref_count();
+		}
+	}
+
+	//T::push_back()-able container
+	template <typename T>
+	requires std::same_as<typename std::remove_cvref_t<T>::element_type, uint32_t>
+	void find_start_nodes(T& container) {
+		
+		for (const auto& node : nodes) {
+
+			if (node == nullptr) {
+				continue;
+			}
+
+			if (node->ref_count() == 0) {
+				container.push_back(node->id());
+			}
+		}
 	}
 
 };
 
+
 template <typename ...output_container>
-static void __cdecl AudioCallback(void* user_data, SDL_AudioStream* audio_stream, int additional_amount, int total_amount) {
-	reinterpret_cast<AudioManager<output_container...>*>(user_data)->audio_update(additional_amount,total_amount);
+static void __cdecl AudioCallback(void* user_data, 
+	SDL_AudioStream* audio_stream, 
+	int additional_amount, 
+	int total_amount) {
+
+	reinterpret_cast<AudioManager_t<output_container...>*>(user_data)->audio_update(additional_amount,total_amount);
 }
+
+
+using AudioManager = AudioManager_t<realtime_sample_output, const_float_output, trigger_output>;

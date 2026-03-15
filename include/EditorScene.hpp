@@ -3,12 +3,12 @@
 #include <print>
 #include "Scene.hpp"
 
-#include "AudioSystem.hpp"
+#include "AudioManager.hpp"
 
 class EditorScene : public SceneBase {
 
 private:
-	//AudioManager audio_manager;
+	AudioManager audio_manager;
 
 
 public:
@@ -61,7 +61,7 @@ private:
 
     void update_node() {
 
-        //audio_manager.ui_update();
+        audio_manager.ui_update();
     }
 
 };

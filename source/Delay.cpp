@@ -3,59 +3,59 @@
 
 namespace AudioProcessor {
 
-	Delay::Delay() : delay_sample_count(10) {
+
+	//exposition only
+	Delay::Delay() : delay_sample_count(10), delay_line(CircularQueue<float>(48000)) {
 
 
 
 	}
 
-	void Delay::process(const std::vector<float>& in, std::vector<float>& out) {
+	//exposition only
+	void Delay::input_connection_data(ConfigData& config_data) {
+
+
+	}
+
+	//exposition only
+	void Delay::input(const data_variant& input, uint32_t input_id_num) {
+
+
+		InputID_t input_id = static_cast<InputID_t>(input_id_num);
+
+		if (input_id == InputID_t::sample) {
+
+			input_samples = std::get<realtime_sample_output>(input).samples;
+		}
+		else if (input_id == InputID_t::mix) {
+
+			edit_mix_ratio(std::get<const_float_output>(input).data);
+		}
+		else if (input_id == InputID_t::delay_ms) {
+
+			edit_delay_time(std::get<const_float_output>(input).data);
+		}
+	}
+
+	//exposition only
+	void Delay::process(data_variant& output) {
 
 		while (delay_sample_count < delay_line.size()) {
 			delay_line.pop();
 		}
 
-		for (size_t idx = 0; idx < in.size(); idx++) {
+		for (size_t idx = 0; idx < input_samples.size(); idx++) {
 
-			delay_line.push(in[idx]);
+			delay_line.push(input_samples[idx]);
 
 			if (delay_sample_count <= delay_line.size()) {
-				out[idx] = delay_line.front();
+				std::get<output_container>(output).samples[idx] = delay_line.front();
 				delay_line.pop();
 			}
 		}
 	}
 
-	size_t Delay::config_count() {
-		return 2;
-	}
-
-	std::optional<ConfigData> Delay::config_data(const uint32_t config_id) {
-
-		switch (config_id) {
-		case 0:
-			return ConfigData{ 0,"delay(ms)",ConfigData::data_type::_int };
-		case 1:
-			return ConfigData{ 1,"mix",ConfigData::data_type::_float01 };
-		}
-		return std::nullopt;
-	}
-
-
-	void Delay::update(const uint32_t config_id, const std::variant<int32_t, bool, float>& value) {
-
-		switch (config_id) {
-		case 0:
-			edit_delay_time(std::get<int32_t>(value));
-			break;
-		case 1:
-			edit_mix_ratio(std::get<float>(value));
-		default:
-			break;
-		}
-
-	}
-
+	//exposition only
 	void Delay::edit_delay_time(uint32_t time/*ms*/) {
 
 		if (time < max_delay_time_ms) {
@@ -63,13 +63,9 @@ namespace AudioProcessor {
 		}
 	}
 
+	//exposition only
 	void Delay::edit_mix_ratio(float ratio) {
 
 		mix = ratio;
-	}
-
-	std::vector<uint32_t>& Delay::next() {
-
-		return next_node;
 	}
 }

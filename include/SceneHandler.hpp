@@ -6,6 +6,7 @@
 #include "EditorScene.hpp"
 
 class SceneHandler {
+
 private:
 
 	std::shared_ptr<SceneBase> scene;

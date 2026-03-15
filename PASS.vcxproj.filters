@@ -48,9 +48,6 @@
     <ClInclude Include="include\ConfigData.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
-    <ClInclude Include="include\AudioSystem.hpp">
-      <Filter>헤더 파일\AudioSystem</Filter>
-    </ClInclude>
     <ClInclude Include="include\GlobalConfig.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>

@@ -2,6 +2,10 @@
 
 App::App() {
 
+}
+
+void App::init() {
+
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         std::print("Error: SDL_Init(): {}\n", SDL_GetError());
         exit(1);
@@ -37,7 +41,10 @@ App::App() {
 
     ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
     ImGui_ImplSDLRenderer3_Init(renderer);
+
 }
+
+
 
 void App::run() {
 
@@ -80,7 +87,7 @@ void App::run() {
     }
 }
 
-App::~App() {
+void App::terminate() {
 
     ImGui_ImplSDLRenderer3_Shutdown();
     ImGui_ImplSDL3_Shutdown();
@@ -89,5 +96,10 @@ App::~App() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+App::~App() {
+
+   
 
 }

@@ -26,7 +26,9 @@ private:
 
 public:
     App();
+    void init();
     void run();
+    void terminate();
     ~App();
 
 
