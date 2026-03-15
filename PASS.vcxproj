@@ -135,7 +135,7 @@
     <ClInclude Include="include\AudioManager.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="include\ConfigData.hpp">
+    <ClInclude Include="include\ConnectionData.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="include\CircularQueue.hpp" />
@@ -154,8 +154,9 @@
   <ItemGroup>
     <ClCompile Include="source\App.cpp" />
     <ClCompile Include="Source\Delay.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="source\EditorScene.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="_3rd_party\imgui\imgui.cpp" />
     <ClCompile Include="_3rd_party\imgui\imgui_demo.cpp" />

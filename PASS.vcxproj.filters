@@ -45,7 +45,7 @@
     <ClInclude Include="include\CircularQueue.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="include\ConfigData.hpp">
+    <ClInclude Include="include\ConnectionData.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
     <ClInclude Include="include\GlobalConfig.hpp">
@@ -96,6 +96,9 @@
       <Filter>소스 파일\imgui</Filter>
     </ClCompile>
     <ClCompile Include="source\App.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EditorScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

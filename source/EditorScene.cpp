@@ -1,0 +1,66 @@
+#include "EditorScene.hpp"
+#include "Delay.hpp"
+
+EditorScene::EditorScene() : state(editor_state::idle) {//audio_manager(AudioManager(2,48000)) {
+
+
+}
+
+void EditorScene::update(SceneHandler* handler) {
+
+
+    update_topbar();
+    audio_manager.ui_update();
+
+}
+
+EditorScene::~EditorScene() {
+
+}
+
+void EditorScene::update_topbar() {
+
+    if (ImGui::BeginMainMenuBar()) {
+
+        if (ImGui::BeginMenu("File")) {
+
+            if (ImGui::MenuItem("New")) {
+
+            }
+            if (ImGui::MenuItem("Open")) {
+
+            }
+            if (ImGui::MenuItem("Save")) {
+
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Exit")) {
+
+            }
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Add")) {
+
+            if (ImGui::MenuItem("Delay")) {
+
+                //add Delay
+                audio_manager.add<AudioProcessor::Delay>();
+            }
+
+            ImGui::EndMenu();
+        }
+
+
+    }
+    ImGui::EndMainMenuBar();
+
+}
+
+void EditorScene::update_node() {
+
+}
+    

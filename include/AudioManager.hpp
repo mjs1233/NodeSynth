@@ -5,6 +5,7 @@
 #include <print>
 #include <queue>
 #include <deque>
+#include <optional>
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_audio.h>
@@ -16,12 +17,21 @@ template <typename ...output_container>
 static void SDLCALL AudioCallback(void* user_data, SDL_AudioStream* audio_stream, int additional_amount, int total_amount);
 
 
+///  The class implementation has become excessively long...
+///  Refactoring is needed.
+///
+///  It seems necessary to create a dedicated class for 
+/// node connect, disconnect, and sequence analysis.
+///  
+///  -->  NodeContainer...?? ........tlqkf :(
+
+
 template <typename ...output_container>
 class AudioManager_t {
 public:
 private:
 	enum class mode_type {
-		edit,
+		idle,
 		connect,
 		play,
 		probe
@@ -37,6 +47,8 @@ private:
 	SDL_AudioSpec audio_spec;
 	mode_type mode;
 
+	uint32_t connect_start_node_id;
+
 	using node_list_t = std::vector<std::shared_ptr<ProcessNodeBase>>;
 	node_list_t nodes;
 
@@ -44,7 +56,8 @@ public:
 
 	AudioManager_t() : 
 		stream(nullptr),
-		mode(mode_type::play){
+		mode(mode_type::idle),
+		connect_start_node_id(0) {
 	
 	}
 
@@ -76,7 +89,7 @@ public:
 
 	template <ProcessNodeTrait T, typename ...Args>
 	requires std::is_constructible<T,Args...>::value 
-	&& (std::is_same<typename T::ouput_tag,output_container>::value || ... )
+	&& (std::is_same<typename T::output_container,output_container>::value || ... )
 	size_t add(Args&& ...args) {
 
 		nodes.push_back(std::make_shared<T>(std::forward<Args>(args)...));
@@ -117,6 +130,32 @@ public:
 
 	void ui_update() {
 
+		for (uint32_t idx = 0; idx < nodes.size(); idx++) {
+
+			if (nodes[idx] == nullptr) {
+				continue;
+			}
+
+			bool connect_start = false;
+			bool connect_end = false;
+			ConnectionData conn_data = nodes[idx]->update_ui(connect_start,connect_end);
+			if (mode == mode_type::idle && connect_start) {
+
+				std::print("start_conn {}", idx);
+				connect_start_node_id = idx;
+				mode = mode_type::connect;
+			}
+			else if (mode == mode_type::connect && connect_end) {
+
+				std::print("end_conn {}", idx);
+				uint32_t connect_end_node_id = idx;
+
+				mode = mode_type::idle;
+
+				connect(connect_start_node_id, connect_end_node_id, conn_data);
+			}
+			draw_connections(idx);
+		}
 
 	}
 
@@ -125,6 +164,53 @@ public:
 	}
 
 private:
+	void draw_connections(uint32_t idx) {
+
+		if (nodes[idx] == nullptr) {
+			return;
+		}
+
+		std::vector<ProcessNodeBase::connection> connections = nodes[idx]->next();
+
+		for (const auto& conn : connections) {
+			std::println("CONNECTED {} ---> {}:{}", idx, conn.target_id, conn.connection_id);
+		}
+
+	}
+
+	void connect(uint32_t start,  uint32_t end, const ConnectionData& end_data) {
+
+		std::optional<std::shared_ptr<ProcessNodeBase>> start_node = get_base(start);
+		std::optional<std::shared_ptr<ProcessNodeBase>> end_node = get_base(end);
+
+		if ((start_node.has_value() && end_node.has_value()) && start != end) {
+
+			ConnectionData start_data = start_node.value()->output_data();;
+			if (start_data.type != end_data.type)
+				return;
+
+			
+			for (const auto& conn : start_node.value()->next()) {
+
+				if (conn.connection_id == end_data.id) {
+					return;
+				}
+			}
+
+			// << check another node is already connected to end connection >>
+			// 
+			// 
+			// It seems like this should be implemented as a bidirectional graph structure
+			// rather than using a ref_count approach.
+			// The overhead during connection lookup is far too heavy.
+
+			// Otherwise, I'll just implement it first and run performance tests afterward.
+
+			start_node.value()->add_next(end_node.value()->id(),end_data.id);
+			end_node.value()->inc_ref();
+			
+		}
+	}
 
 
 	//need T::push_back()-able container
