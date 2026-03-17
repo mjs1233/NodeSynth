@@ -6,8 +6,8 @@ namespace AudioProcessor {
 
 
 	//exposition only
-	Delay::Delay() : delay_sample_count(10), delay_line(CircularQueue<float>(48000)) {
-		
+	Delay::Delay() : delay_sample_count(10), delay_line(CircularQueue<float>(48000)) {	
+
 		input_connection_count = 3;
 	};
 
@@ -54,7 +54,6 @@ namespace AudioProcessor {
 
 	//exposition only
 	void Delay::input(const data_variant& input, uint32_t input_id_num) {
-
 
 		InputID_t input_id = static_cast<InputID_t>(input_id_num);
 

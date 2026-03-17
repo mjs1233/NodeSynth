@@ -80,12 +80,12 @@ public:
 		id_value = id;
 	}
 
-	uint32_t id() {
+	uint32_t id() const {
 
 		return id_value;
 	}
 
-	uint32_t connection_count() {
+	uint32_t connection_count() const {
 
 		return input_connection_count;
 	}

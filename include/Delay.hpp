@@ -36,7 +36,7 @@ namespace AudioProcessor {
 		using output_container = realtime_sample_output;
 
 		virtual void connection_data(ConnectionData& config_data,uint32_t id) override;
-		virtual void input(const data_variant& input, uint32_t input_id_num)override;
+		virtual void input(const data_variant& input, uint32_t input_id_num) override;
 		virtual void process(data_variant& output) override;
 		virtual ConnectionData update_ui(bool& connection_start, bool& connection_end) override;
 		virtual ConnectionData output_data() override;

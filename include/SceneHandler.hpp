@@ -20,10 +20,13 @@ public:
 		scene->update(this);
 	}
 	
+private:
 	template <SceneTrait T, typename ...Args>
 	requires std::is_constructible<T, Args...>::value
 	void change(Args&& ...args) {
 
 		scene = std::make_shared<T>(std::forward<Args>(args)...);
 	}
+
+	friend void EditorScene::update(SceneHandler* handler);
 };

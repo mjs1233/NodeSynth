@@ -11,7 +11,6 @@ void EditorScene::update(SceneHandler* handler) {
 
     update_topbar();
     audio_manager.ui_update();
-
 }
 
 EditorScene::~EditorScene() {
