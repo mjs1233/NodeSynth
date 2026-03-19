@@ -9,6 +9,7 @@
 #include <imgui.h>
 
 #include "ConnectionData.hpp"
+#include "ConnectionHandler.hpp"
 
 
 template <typename ...output_containers>
@@ -29,6 +30,8 @@ public:
 
 protected:
 	std::vector<connection> next_nodes;
+	ConnectionHandler connection_handler;
+
 	uint32_t reference_count;
 	uint32_t id_value;
 	ImVec2 window_position;
@@ -36,42 +39,17 @@ protected:
 	uint32_t input_connection_count;
 
 public:
-	ProcessNodeBase_t() : id_value(0), reference_count(0),window_position(0,0), input_connection_count(0){
+	explicit ProcessNodeBase_t(ConnectionData output_data) : 
+		connection_handler(output_data), 
+		id_value(0), 
+		reference_count(0), 
+		window_position(0, 0), 
+		input_connection_count(0) {
 
 	}
 
-	const std::vector<connection>& next() {
-
-		return next_nodes;
-	}
-
-	void add_next(uint32_t target_id, uint32_t connection_id) {
-
-		next_nodes.push_back(connection{target_id,connection_id});
-	}
-
-	void remove_next(const connection& id) {
-
-		next_nodes = next_nodes
-			| std::views::filter([&](connection v) { return v != id; })
-			| std::ranges::to<std::vector<connection>>();
-
-	}
-
-	uint32_t ref_count() const {
-
-		return reference_count;
-	}
-
-	void inc_ref() {
-
-		reference_count++;
-	}
-
-	bool dec_ref() {
-
-		reference_count--;
-		return reference_count;
+	ConnectionHandler& connection() {
+		return connection_handler;
 	}
 
 
@@ -85,18 +63,11 @@ public:
 		return id_value;
 	}
 
-	uint32_t connection_count() const {
-
-		return input_connection_count;
-	}
-
 	using data_variant = std::variant<output_containers...>;
 
-	virtual void connection_data(ConnectionData& connection_data, uint32_t id) = 0;
 	virtual void input(const data_variant& input,uint32_t input_id) = 0;
 	virtual void process(data_variant& output) = 0;
 	virtual ConnectionData update_ui(bool& connection_start, bool& connection_end) = 0;
-	virtual ConnectionData output_data() = 0;
 };
 
 

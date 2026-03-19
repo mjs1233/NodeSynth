@@ -6,51 +6,57 @@ namespace AudioProcessor {
 
 
 	//exposition only
-	Delay::Delay() : delay_sample_count(10), delay_line(CircularQueue<float>(48000)) {	
+	Delay::Delay() : delay_sample_count(10), 
+		delay_line(CircularQueue<float>(48000)), 
+		ProcessNodeBase(ConnectionData(0, "output", ConnectionData::data_type::_real_time_sample, 0, 0)) {
 
 		input_connection_count = 3;
+		init_connection_handler();
 	};
 
 
 	//exposition only
-	Delay::Delay(size_t delay_line_sample_count) : delay_sample_count(10), delay_line(CircularQueue<float>(delay_line_sample_count)) {
+	Delay::Delay(size_t delay_line_sample_count) : 
+		delay_sample_count(10), 
+		delay_line(CircularQueue<float>(delay_line_sample_count)),
+		ProcessNodeBase(ConnectionData(0,"output",ConnectionData::data_type::_real_time_sample,0,0)) {
 	
+
 		input_connection_count = 3;
+		init_connection_handler();
 	}
 
-	//exposition only
-	void Delay::connection_data(ConnectionData& conn_data, uint32_t id) {
 
-		if (id == std::to_underlying(InputID_t::sample)) {
-			conn_data = ConnectionData {
+	void Delay::init_connection_handler() {
+
+		connection_handler.add_input(
+			std::to_underlying(InputID_t::sample),
+			ConnectionData{
 				std::to_underlying(InputID_t::sample),
 				"SAMPLE",
 				ConnectionData::data_type::_real_time_sample,
 				0,30
-			};
-			return;
-		}
+			});
 
-		if (id == std::to_underlying(InputID_t::mix)) {
-			conn_data = ConnectionData {
+		connection_handler.add_input(
+			std::to_underlying(InputID_t::mix),
+			ConnectionData{
 				std::to_underlying(InputID_t::mix),
 				"MIX",
 				ConnectionData::data_type::_float01,
 				0,60
-			};
-			return;
-		}
+			});
 
-		if (id == std::to_underlying(InputID_t::delay_ms)) {
-			conn_data = ConnectionData {
+		connection_handler.add_input(
+			std::to_underlying(InputID_t::delay_ms),
+			ConnectionData{
 				std::to_underlying(InputID_t::delay_ms),
 				"DELAY",
 				ConnectionData::data_type::_float,
 				0,90
-			};
-			return;
-		}
+			});
 	}
+
 
 	//exposition only
 	void Delay::input(const data_variant& input, uint32_t input_id_num) {
@@ -100,41 +106,30 @@ namespace AudioProcessor {
 		ImGui::BeginGroup();
 
 		ConnectionData conn;
-		bool button_press_flag = false;
+		bool input_press_flag = false;
 
 		if (ImGui::Button("SAMPLE")) {
 
-			conn = ConnectionData {
-				std::to_underlying(InputID_t::sample),
-				"SAMPLE",
-				ConnectionData::data_type::_real_time_sample,
-				ImGui::GetItemRectMin().x ,
-				ImGui::GetItemRectMin().y 
-			};
-			button_press_flag = true;
+			conn = connection_handler.get_input(std::to_underlying(InputID_t::sample)).value();
+			conn.offset_x = ImGui::GetItemRectMin().x;
+			conn.offset_y = ImGui::GetItemRectMin().y;
+
+			input_press_flag = true;
 		}
 		if (ImGui::Button("MIX")) {
 
-			conn = ConnectionData{
-				std::to_underlying(InputID_t::mix),
-				"MIX",
-				ConnectionData::data_type::_float01,
-				ImGui::GetItemRectMin().x ,
-				ImGui::GetItemRectMin().y
-			};
-			button_press_flag = true;
+			conn = connection_handler.get_input(std::to_underlying(InputID_t::mix)).value();
+			conn.offset_x = ImGui::GetItemRectMin().x;
+			conn.offset_y = ImGui::GetItemRectMin().y;
+			input_press_flag = true;
 		}
 
 		if (ImGui::Button("DELAY(ms)")) {
 
-			conn = ConnectionData{
-				std::to_underlying(InputID_t::delay_ms),
-				"DELAY",
-				ConnectionData::data_type::_float,
-				ImGui::GetItemRectMin().x ,
-				ImGui::GetItemRectMin().y
-			};
-			button_press_flag = true;
+			conn = connection_handler.get_input(std::to_underlying(InputID_t::delay_ms)).value();
+			conn.offset_x = ImGui::GetItemRectMin().x;
+			conn.offset_y = ImGui::GetItemRectMin().y;
+			input_press_flag = true;
 		}
 
 		
@@ -154,16 +149,11 @@ namespace AudioProcessor {
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + space - right_width);
 
 		connection_start = ImGui::Button("OUT");
-		connection_end   = button_press_flag;
+		connection_end   = input_press_flag;
 
 		ImGui::End();
 
 		return conn;
-	}
-
-	//exposition only
-	ConnectionData Delay::output_data() {
-		return ConnectionData(std::numeric_limits<uint32_t>::max(), "out", ConnectionData::data_type::_real_time_sample, 0, 0);
 	}
 
 	//exposition only

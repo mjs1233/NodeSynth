@@ -27,12 +27,12 @@ bool NodeContainer::connect(
 
 	if (start_node != nullptr && end_node != nullptr && start_node->id() != end_node->id()) {
 
-		ConnectionData start_data = start_node->output_data();;
+		ConnectionData start_data = start_node->connection().get_output();
 		if (start_data.type != end_connection_data.type)
 			return false;
 
 
-		for (const auto& conn : start_node->next()) {
+		for (const auto& conn : start_node->connection().get_connections()) {
 
 			if (conn.connection_id == end_connection_data.id) {
 				return false;
@@ -41,8 +41,7 @@ bool NodeContainer::connect(
 
 		// TODO: Add logic to verify whether a connection between nodes already exists
 
-		start_node->add_next(end_node->id(), end_connection_data.id);
-		end_node->inc_ref();
+		start_node->connection().connect(end_node->id(), end_connection_data.id);
 		return true;
 	}
 }
@@ -60,7 +59,7 @@ void NodeContainer::make_ref_count_list(std::vector<int32_t>& container) {
 		}
 
 		//for advanced id system
-		container[nodes[idx]->id()] = nodes[idx]->ref_count();
+		container[nodes[idx]->id()] = nodes[idx]->connection().ref_count();
 	}
 }
 
@@ -72,7 +71,7 @@ void NodeContainer::find_start_nodes(std::queue<uint32_t>& container) {
 			continue;
 		}
 
-		if (node->ref_count() == 0) {
+		if (node->connection().ref_count() == 0) {
 			container.push(node->id());
 		}
 	}

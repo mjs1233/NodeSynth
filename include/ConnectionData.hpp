@@ -4,6 +4,7 @@
 #include <variant>
 #include <cinttypes>
 #include <string>
+#include <functional>
 
 
 class ConnectionData {

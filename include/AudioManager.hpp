@@ -168,7 +168,7 @@ private:
 			return;
 		}
 
-		std::vector<ProcessNodeBase::connection> connections = node->next();
+		std::deque<ConnectionHandler::connection> connections = node->connection().get_connections();
 
 		for (const auto& conn : connections) {
 			LOG(std::println("draw connection {} ---> {}:{}", node->id(), conn.target_id, conn.connection_id))
