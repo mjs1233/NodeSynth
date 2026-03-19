@@ -30,27 +30,27 @@ namespace AudioProcessor {
 	void Delay::init_connection_handler() {
 
 		connection_handler.add_input(
-			std::to_underlying(InputID_t::sample),
+			std::to_underlying(InputTypes::sample),
 			ConnectionData{
-				std::to_underlying(InputID_t::sample),
+				std::to_underlying(InputTypes::sample),
 				"SAMPLE",
 				ConnectionData::data_type::_real_time_sample,
 				0,30
 			});
 
 		connection_handler.add_input(
-			std::to_underlying(InputID_t::mix),
+			std::to_underlying(InputTypes::mix),
 			ConnectionData{
-				std::to_underlying(InputID_t::mix),
+				std::to_underlying(InputTypes::mix),
 				"MIX",
 				ConnectionData::data_type::_float01,
 				0,60
 			});
 
 		connection_handler.add_input(
-			std::to_underlying(InputID_t::delay_ms),
+			std::to_underlying(InputTypes::delay_ms),
 			ConnectionData{
-				std::to_underlying(InputID_t::delay_ms),
+				std::to_underlying(InputTypes::delay_ms),
 				"DELAY",
 				ConnectionData::data_type::_float,
 				0,90
@@ -61,19 +61,19 @@ namespace AudioProcessor {
 	//exposition only
 	void Delay::input(const data_variant& input, uint32_t input_id_num) {
 
-		InputID_t input_id = static_cast<InputID_t>(input_id_num);
+		InputTypes input_id = static_cast<InputTypes>(input_id_num);
 
-		if (input_id == InputID_t::sample) {
+		if (input_id == InputTypes::sample) {
 
-			input_samples = std::get<realtime_sample_output>(input).samples;
+			input_samples = std::get<RealtimeSample>(input).samples;
 		}
-		else if (input_id == InputID_t::mix) {
+		else if (input_id == InputTypes::mix) {
 
-			edit_mix_ratio(std::get<const_float_output>(input).data);
+			edit_mix_ratio(std::get<FloatParam>(input).data);
 		}
-		else if (input_id == InputID_t::delay_ms) {
+		else if (input_id == InputTypes::delay_ms) {
 
-			edit_delay_time(std::get<const_float_output>(input).data);
+			edit_delay_time(std::get<FloatParam>(input).data);
 		}
 	}
 
@@ -110,7 +110,7 @@ namespace AudioProcessor {
 
 		if (ImGui::Button("SAMPLE")) {
 
-			conn = connection_handler.get_input(std::to_underlying(InputID_t::sample)).value();
+			conn = connection_handler.get_input(std::to_underlying(InputTypes::sample)).value();
 			conn.offset_x = ImGui::GetItemRectMin().x;
 			conn.offset_y = ImGui::GetItemRectMin().y;
 
@@ -118,7 +118,7 @@ namespace AudioProcessor {
 		}
 		if (ImGui::Button("MIX")) {
 
-			conn = connection_handler.get_input(std::to_underlying(InputID_t::mix)).value();
+			conn = connection_handler.get_input(std::to_underlying(InputTypes::mix)).value();
 			conn.offset_x = ImGui::GetItemRectMin().x;
 			conn.offset_y = ImGui::GetItemRectMin().y;
 			input_press_flag = true;
@@ -126,7 +126,7 @@ namespace AudioProcessor {
 
 		if (ImGui::Button("DELAY(ms)")) {
 
-			conn = connection_handler.get_input(std::to_underlying(InputID_t::delay_ms)).value();
+			conn = connection_handler.get_input(std::to_underlying(InputTypes::delay_ms)).value();
 			conn.offset_x = ImGui::GetItemRectMin().x;
 			conn.offset_y = ImGui::GetItemRectMin().y;
 			input_press_flag = true;

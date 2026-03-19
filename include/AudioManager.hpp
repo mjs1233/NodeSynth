@@ -168,7 +168,7 @@ private:
 			return;
 		}
 
-		std::deque<ConnectionHandler::connection> connections = node->connection().get_connections();
+		std::deque<connection> connections = node->connection().get_connections();
 
 		for (const auto& conn : connections) {
 			LOG(std::println("draw connection {} ---> {}:{}", node->id(), conn.target_id, conn.connection_id))
@@ -190,4 +190,4 @@ static void __cdecl AudioCallback(
 }
 
 
-using AudioManager = AudioManager_t<realtime_sample_output, const_float_output, trigger_output>;
+using AudioManager = AudioManager_t<RealtimeSample, FloatParam, Trigger>;

@@ -10,23 +10,13 @@
 
 #include "ConnectionData.hpp"
 #include "ConnectionHandler.hpp"
-
+class ConnectionHandler;
+struct connection;
+class ConnectionData;
 
 template <typename ...output_containers>
 class ProcessNodeBase_t {
 
-public:
-	struct connection {
-		uint32_t target_id;
-		uint32_t connection_id;
-		bool operator==(const connection& V_right) {
-			return (V_right.connection_id == target_id && V_right.connection_id == connection_id);
-		}
-
-		bool operator!=(const connection& V_right) {
-			return !(this == V_right);
-		}
-	};
 
 protected:
 	std::vector<connection> next_nodes;
@@ -40,7 +30,7 @@ protected:
 
 public:
 	explicit ProcessNodeBase_t(ConnectionData output_data) : 
-		connection_handler(output_data), 
+		connection_handler(ConnectionHandler(output_data)),
 		id_value(0), 
 		reference_count(0), 
 		window_position(0, 0), 
@@ -70,23 +60,49 @@ public:
 	virtual ConnectionData update_ui(bool& connection_start, bool& connection_end) = 0;
 };
 
+using type_id_t = uint32_t;
 
-struct realtime_sample_output {
+inline uint32_t get_next_type_id() {
+	static type_id_t current_id = 0;
+	return current_id++;
+}
 
+template <typename T>
+inline type_id_t get_type_id() {
+	static const type_id_t id = get_next_type_id();
+	return id;
+}
+
+struct OutputHeader {
+
+	type_id_t type_id;
+	OutputHeader(type_id_t type_id) : type_id(type_id) {
+
+	}
+
+	virtual ~OutputHeader() = default;
+}; 
+
+
+struct RealtimeSample : public OutputHeader {
 	std::vector<float> samples;
+
+	RealtimeSample(type_id_t id) : OutputHeader(id) {}
 };
 
-struct const_float_output {
-	
+struct FloatParam : public OutputHeader {
 	float data;
+
+	FloatParam(type_id_t id) : OutputHeader(id), data(0) {}
 };
 
-struct trigger_output {
-
+struct Trigger : public OutputHeader {
 	uint32_t trigger_offset;
+
+	Trigger(type_id_t id) : OutputHeader(id),trigger_offset(0) {}
 };
 
-using ProcessNodeBase = ProcessNodeBase_t<realtime_sample_output, const_float_output, trigger_output>;
+using ProcessNodeBase = ProcessNodeBase_t<RealtimeSample, FloatParam, Trigger>;
 
 
 template<typename T>

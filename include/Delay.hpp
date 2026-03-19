@@ -12,7 +12,7 @@ namespace AudioProcessor {
 	class Delay : public ProcessNodeBase {
 
 	private:
-		enum class InputID_t : uint32_t {
+		enum class InputTypes : uint32_t {
 			sample = 0,
 			mix = 1,
 			delay_ms = 2
@@ -33,7 +33,7 @@ namespace AudioProcessor {
 
 		Delay(size_t delay_line_sample_count);
 
-		using output_container = realtime_sample_output;
+		using output_container = RealtimeSample;
 
 
 		virtual void input(const data_variant& input, uint32_t input_id_num) override;
