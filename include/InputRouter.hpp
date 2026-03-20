@@ -10,40 +10,9 @@
 #include <concepts>
 #include <type_traits>
 
+#include "Outputs.hpp"
 #include "ConnectionData.hpp"
 #include "ProcessorNode.hpp"
-
-using type_id_t = uint32_t;
-
-struct OutputHeader {
-
-	type_id_t type_id;
-	OutputHeader(type_id_t type_id) : type_id(type_id) {
-
-	}
-
-	virtual ~OutputHeader() = default;
-};
-
-
-struct RealtimeSample : public OutputHeader {
-	std::vector<float> samples;
-
-	RealtimeSample(type_id_t id) : OutputHeader(id) {}
-};
-
-struct FloatParam : public OutputHeader {
-	float data;
-
-	FloatParam(type_id_t id) : OutputHeader(id), data(0) {}
-};
-
-struct Trigger : public OutputHeader {
-	uint32_t trigger_offset;
-
-	Trigger(type_id_t id) : OutputHeader(id), trigger_offset(0) {}
-};
-
 
 inline static type_id_t get_next_type_id() {
 	static type_id_t current_id = 1;
@@ -122,14 +91,12 @@ public:
 		max_port_count(max_port_count),
 		next_port_id(0) {
 
-		
-		std::apply([](auto recv_funcs){
-			recv_funcs.functions.resize(max_port_count);
+		std::apply([max_port_count](auto&... args) {
+			(args.functions.resize(max_port_count), ...);
 			}, recv_callback);
-		
 
-		std::apply([](auto port_list) {
-			port_list.ports.resize(max_port_count);
+		std::apply([max_port_count](auto&... args) {
+			(args.ports.resize(max_port_count), ...);
 			}, input_ports);
 	}
 
@@ -186,62 +153,14 @@ public:
 			return std::nullopt;
 		}
 
-		if (std::get<InputPort<output_type>>(input_ports).port[id].allocated) {
+		if (std::get<InputPortList<output_type>>(input_ports).port[id].allocated) {
 			
 			return std::nullopt;
 		}
 
-		return std::get<InputPort<output_type>>(input_ports).ports[id];
+		return std::get<InputPortList<output_type>>(input_ports).ports[id];
 	}
 
 };
+
 using InputRouter = InputRouterBase<RealtimeSample, FloatParam, Trigger>;
-
-class OutputRouter {
-private:
-	type_id_t type_id;
-	std::shared_ptr<InputRouter> next_input;
-public:
-
-	template<typename T>
-	OutputRouter() {
-
-		type_id = get_type_id<T>();
-	}
-
-	void set_next(std::shared_ptr<InputRouter> next_input) {
-
-		this->next_input = next_input;
-	}
-
-	template<OutputDataType output_type>
-	void send(std::shared_ptr<output_type> data,uint32_t id) {
-		
-		next_input->recv(std::static_pointer_cast<OutputHeader>(data), id);
-	}
-
-	template<OutputDataType output_type>
-	bool check_send(std::shared_ptr<output_type> data, uint32_t id) {
-
-		std::optional<InputPort<output_type>> port =
-			next_input->get_port<output_type>(id);
-
-		//check port 
-
-		if (!port.has_value()) {
-
-			return false;
-		}
-
-		if (port.value().type_id != type_id) {
-
-			return false;
-		}
-
-		//send
-		next_input->recv(std::static_pointer_cast<OutputHeader>(data), id);
-		
-	}
-
-	
-};

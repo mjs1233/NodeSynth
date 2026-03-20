@@ -148,6 +148,8 @@
     <ClInclude Include="include\GlobalConfig.hpp" />
     <ClInclude Include="include\InputRouter.hpp" />
     <ClInclude Include="include\NodeContainer.hpp" />
+    <ClInclude Include="include\OutputRouter.hpp" />
+    <ClInclude Include="include\Outputs.hpp" />
     <ClInclude Include="include\ProcessorNode.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
