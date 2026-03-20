@@ -8,11 +8,14 @@
 
 #include <imgui.h>
 
+#include "InputRouter.hpp"
+
 #include "ConnectionData.hpp"
 #include "ConnectionHandler.hpp"
 class ConnectionHandler;
 struct connection;
 class ConnectionData;
+
 
 template <typename ...output_containers>
 class ProcessNodeBase_t {
@@ -20,6 +23,11 @@ class ProcessNodeBase_t {
 
 protected:
 	std::vector<connection> next_nodes;
+
+	std::shared_ptr<InputRouter> input;
+	std::shared_ptr<OutputRouter> output;
+	
+
 	ConnectionHandler connection_handler;
 
 	uint32_t reference_count;
@@ -36,6 +44,8 @@ public:
 		window_position(0, 0), 
 		input_connection_count(0) {
 
+		input = std::make_shared<InputRouter>();
+		output = std::make_shared<OutputRouter>();
 	}
 
 	ConnectionHandler& connection() {
@@ -53,54 +63,20 @@ public:
 		return id_value;
 	}
 
+	std::shared_ptr<InputRouter> input() {
+
+
+	}
+
 	using data_variant = std::variant<output_containers...>;
 
-	virtual void input(const data_variant& input,uint32_t input_id) = 0;
+	//virtual void input(const data_variant& input,uint32_t input_id) = 0;
 	virtual void process(data_variant& output) = 0;
 	virtual ConnectionData update_ui(bool& connection_start, bool& connection_end) = 0;
 };
 
-using type_id_t = uint32_t;
-
-inline uint32_t get_next_type_id() {
-	static type_id_t current_id = 0;
-	return current_id++;
-}
-
-template <typename T>
-inline type_id_t get_type_id() {
-	static const type_id_t id = get_next_type_id();
-	return id;
-}
-
-struct OutputHeader {
-
-	type_id_t type_id;
-	OutputHeader(type_id_t type_id) : type_id(type_id) {
-
-	}
-
-	virtual ~OutputHeader() = default;
-}; 
 
 
-struct RealtimeSample : public OutputHeader {
-	std::vector<float> samples;
-
-	RealtimeSample(type_id_t id) : OutputHeader(id) {}
-};
-
-struct FloatParam : public OutputHeader {
-	float data;
-
-	FloatParam(type_id_t id) : OutputHeader(id), data(0) {}
-};
-
-struct Trigger : public OutputHeader {
-	uint32_t trigger_offset;
-
-	Trigger(type_id_t id) : OutputHeader(id),trigger_offset(0) {}
-};
 
 using ProcessNodeBase = ProcessNodeBase_t<RealtimeSample, FloatParam, Trigger>;
 
