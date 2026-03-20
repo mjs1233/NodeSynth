@@ -1,26 +1,41 @@
 #pragma once
 #include <concepts>
 #include <memory>
-
-#include "InputRouter.hpp"
 #include "ProcessorNode.hpp"
+
 #include "Outputs.hpp"
+
 
 class OutputRouter {
 private:
+	struct Connection {
+		std::shared_ptr<ProcessNodeBase> next_ptr;
+		uint32_t id;
+
+		Connection(std::shared_ptr<ProcessNodeBase> next_ptr, uint32_t port_id) :
+			next_ptr(next_ptr),
+			id(port_id) {
+		}
+	};
+
+
 	type_id_t type_id;
-	std::shared_ptr<ProcessNodeBase> next_input;
+	std::vector<Connection> output_connection;
 public:
 
-	template<typename T>
 	OutputRouter() {
+
+	}
+
+	template<typename T>
+	void set_type_id() {
 
 		type_id = get_type_id<T>();
 	}
 
-	void set_next(std::shared_ptr<ProcessNodeBase> next_input) {
+	void add_next(std::shared_ptr<ProcessNodeBase> next_input,uint32_t id) {
 
-		this->next_input = next_input;
+		output_connection.push_back(Connection(next_input, id));
 	}
 
 	template<OutputDataType output_type>

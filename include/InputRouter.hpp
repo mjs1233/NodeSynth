@@ -11,7 +11,6 @@
 #include <type_traits>
 
 #include "Outputs.hpp"
-#include "ConnectionData.hpp"
 #include "ProcessorNode.hpp"
 
 inline static type_id_t get_next_type_id() {
@@ -91,6 +90,12 @@ public:
 		max_port_count(max_port_count),
 		next_port_id(0) {
 
+		set_max_port_count(max_port_count);
+	}
+
+	void set_max_port_count(size_t max_port_count) {
+
+		this->max_port_count = max_port_count;
 		std::apply([max_port_count](auto&... args) {
 			(args.functions.resize(max_port_count), ...);
 			}, recv_callback);
@@ -98,11 +103,6 @@ public:
 		std::apply([max_port_count](auto&... args) {
 			(args.ports.resize(max_port_count), ...);
 			}, input_ports);
-	}
-
-	void set_max_port_count(size_t max_port_count) {
-
-		this->max_port_count = max_port_count;
 	}
 
 	template<OutputDataType output_type, PortIDEnumU32 port_id_type>

@@ -1,6 +1,6 @@
 #include "Delay.hpp"
 #include <utility>
-
+#include <string>
 
 namespace AudioProcessor {
 
@@ -8,77 +8,24 @@ namespace AudioProcessor {
 	//exposition only
 	Delay::Delay() : delay_sample_count(10), 
 		delay_line(CircularQueue<float>(48000)), 
-		ProcessNodeBase(ConnectionData(0, "output", ConnectionData::data_type::_real_time_sample, 0, 0)) {
+		ProcessNodeBase(InputRouter(3),OutputRouter()) {
 
-		input_connection_count = 3;
-		init_connection_handler();
+		output.set_type_id<output_container>();
 	};
-
 
 	//exposition only
 	Delay::Delay(size_t delay_line_sample_count) : 
 		delay_sample_count(10), 
 		delay_line(CircularQueue<float>(delay_line_sample_count)),
-		ProcessNodeBase(ConnectionData(0,"output",ConnectionData::data_type::_real_time_sample,0,0)) {
+		ProcessNodeBase(InputRouter(3), OutputRouter()) {
 	
-
-		input_connection_count = 3;
-		init_connection_handler();
-	}
-
-
-	void Delay::init_connection_handler() {
-
-		connection_handler.add_input(
-			std::to_underlying(InputTypes::sample),
-			ConnectionData{
-				std::to_underlying(InputTypes::sample),
-				"SAMPLE",
-				ConnectionData::data_type::_real_time_sample,
-				0,30
-			});
-
-		connection_handler.add_input(
-			std::to_underlying(InputTypes::mix),
-			ConnectionData{
-				std::to_underlying(InputTypes::mix),
-				"MIX",
-				ConnectionData::data_type::_float01,
-				0,60
-			});
-
-		connection_handler.add_input(
-			std::to_underlying(InputTypes::delay_ms),
-			ConnectionData{
-				std::to_underlying(InputTypes::delay_ms),
-				"DELAY",
-				ConnectionData::data_type::_float,
-				0,90
-			});
-	}
-
-
-	//exposition only
-	void Delay::input(const data_variant& input, uint32_t input_id_num) {
-
-		InputTypes input_id = static_cast<InputTypes>(input_id_num);
-
-		if (input_id == InputTypes::sample) {
-
-			input_samples = std::get<RealtimeSample>(input).samples;
-		}
-		else if (input_id == InputTypes::mix) {
-
-			edit_mix_ratio(std::get<FloatParam>(input).data);
-		}
-		else if (input_id == InputTypes::delay_ms) {
-
-			edit_delay_time(std::get<FloatParam>(input).data);
-		}
 	}
 
 	//exposition only
-	void Delay::process(data_variant& output) {
+	void Delay::process() {
+
+		std::shared_ptr<RealtimeSample> output = std::make_shared<RealtimeSample>();
+		output->samples.resize(input_samples.size());
 
 		while (delay_sample_count < delay_line.size()) {
 			delay_line.pop();
@@ -89,14 +36,14 @@ namespace AudioProcessor {
 			delay_line.push(input_samples[idx]);
 
 			if (delay_sample_count <= delay_line.size()) {
-				std::get<output_container>(output).samples[idx] = delay_line.front();
+				output->samples[idx] = delay_line.front();
 				delay_line.pop();
 			}
 		}
 	}
 
 	//exposition only
-	ConnectionData Delay::update_ui(bool& connection_start,bool& connection_end) {
+	void Delay::update_ui(bool& connection_start, ProcessNodeBase& start_node) {
 		
 		ImGui::SetNextWindowSize({ 350,130 });
 		std::string str_id = std::string() + "DELAY" + std::to_string(id());
@@ -105,31 +52,32 @@ namespace AudioProcessor {
 		window_position = ImGui::GetCursorScreenPos();
 		ImGui::BeginGroup();
 
-		ConnectionData conn;
-		bool input_press_flag = false;
 
-		if (ImGui::Button("SAMPLE")) {
+		if (connection_start) {
 
-			conn = connection_handler.get_input(std::to_underlying(InputTypes::sample)).value();
-			conn.offset_x = ImGui::GetItemRectMin().x;
-			conn.offset_y = ImGui::GetItemRectMin().y;
+			if (ImGui::Button("SAMPLE")) {
 
-			input_press_flag = true;
+				start_node.output_router().add_next(
+					std::shared_ptr<ProcessNodeBase>((ProcessNodeBase*)(this)),
+					std::to_underlying(InputTypes::sample));
+			}
+			if (ImGui::Button("MIX")) {
+
+				start_node.output_router().
+					add_next(std::shared_ptr<ProcessNodeBase>((ProcessNodeBase*)(this)),
+					std::to_underlying(InputTypes::mix));
+			}
+			if (ImGui::Button("DELAY(ms)")) {
+
+				start_node.output_router().add_next(std::shared_ptr<ProcessNodeBase>((ProcessNodeBase*)(this)),
+					std::to_underlying(InputTypes::delay_ms));
+			}
 		}
-		if (ImGui::Button("MIX")) {
+		else {
 
-			conn = connection_handler.get_input(std::to_underlying(InputTypes::mix)).value();
-			conn.offset_x = ImGui::GetItemRectMin().x;
-			conn.offset_y = ImGui::GetItemRectMin().y;
-			input_press_flag = true;
-		}
-
-		if (ImGui::Button("DELAY(ms)")) {
-
-			conn = connection_handler.get_input(std::to_underlying(InputTypes::delay_ms)).value();
-			conn.offset_x = ImGui::GetItemRectMin().x;
-			conn.offset_y = ImGui::GetItemRectMin().y;
-			input_press_flag = true;
+			ImGui::Button("SAMPLE");
+			ImGui::Button("MIX");
+			ImGui::Button("DELAY(ms)");
 		}
 
 		
@@ -149,11 +97,10 @@ namespace AudioProcessor {
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + space - right_width);
 
 		connection_start = ImGui::Button("OUT");
-		connection_end   = input_press_flag;
 
 		ImGui::End();
 
-		return conn;
+		return;
 	}
 
 	//exposition only

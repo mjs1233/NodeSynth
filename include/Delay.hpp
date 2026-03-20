@@ -29,6 +29,7 @@ namespace AudioProcessor {
 
 
 	public:
+
 		Delay();
 
 		Delay(size_t delay_line_sample_count);
@@ -36,11 +37,10 @@ namespace AudioProcessor {
 		using output_container = RealtimeSample;
 
 
-		virtual void input(const data_variant& input, uint32_t input_id_num) override;
-		virtual void process(data_variant& output) override;
-		virtual ConnectionData update_ui(bool& connection_start, bool& connection_end) override;
+		virtual void process() override;
+		virtual void update_ui(bool& connection_start, ProcessNodeBase& start_node) override;
 	private:
-		void init_connection_handler();
+
 		void edit_delay_time(uint32_t time/*ms*/);
 		void edit_mix_ratio(float ratio);
 

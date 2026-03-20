@@ -9,49 +9,38 @@
 #include <imgui.h>
 
 #include "InputRouter.hpp"
+#include "OutputRouter.hpp"
+#include "Outputs.hpp"
 
-#include "ConnectionData.hpp"
-#include "ConnectionHandler.hpp"
-class ConnectionHandler;
-struct connection;
-class ConnectionData;
+template <typename ...output_containers>
+class ProcessNodeBase_t;
 
+using ProcessNodeBase = ProcessNodeBase_t<RealtimeSample, FloatParam, Trigger>;
 
 template <typename ...output_containers>
 class ProcessNodeBase_t {
 
 
 protected:
-	std::vector<connection> next_nodes;
+	InputRouter input;
+	OutputRouter output;
 
-	std::shared_ptr<InputRouter> input;
-	std::shared_ptr<OutputRouter> output;
-	
-
-	ConnectionHandler connection_handler;
 
 	uint32_t reference_count;
 	uint32_t id_value;
 	ImVec2 window_position;
 
-	uint32_t input_connection_count;
 
 public:
-	explicit ProcessNodeBase_t(ConnectionData output_data) : 
-		connection_handler(ConnectionHandler(output_data)),
+	explicit ProcessNodeBase_t(const InputRouter& input, const OutputRouter& output) : 
 		id_value(0), 
 		reference_count(0), 
 		window_position(0, 0), 
-		input_connection_count(0) {
+		input_connection_count(0),
+		input(input),
+		output(output) {
 
-		input = std::make_shared<InputRouter>();
-		output = std::make_shared<OutputRouter>();
 	}
-
-	ConnectionHandler& connection() {
-		return connection_handler;
-	}
-
 
 	void set_id(uint32_t id) {
 
@@ -63,22 +52,24 @@ public:
 		return id_value;
 	}
 
-	std::shared_ptr<InputRouter> input() {
+	InputRouter& input_router() {
 
-
+		return input;
 	}
 
-	using data_variant = std::variant<output_containers...>;
+	OutputRouter& output_router() {
 
-	//virtual void input(const data_variant& input,uint32_t input_id) = 0;
-	virtual void process(data_variant& output) = 0;
-	virtual ConnectionData update_ui(bool& connection_start, bool& connection_end) = 0;
+		return output;
+	}
+
+
+	virtual void process() = 0;
+	virtual void update_ui(bool& connection_start, ProcessNodeBase& start_node) = 0;
 };
 
 
 
 
-using ProcessNodeBase = ProcessNodeBase_t<RealtimeSample, FloatParam, Trigger>;
 
 
 template<typename T>
