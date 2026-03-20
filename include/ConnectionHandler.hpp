@@ -1,29 +1,35 @@
 #pragma once
 
-#include <map>
-#include <vector>
-#include <deque>
 #include <print>
-#include <ranges>
+#include <vector>
+#include <functional>
+#include <memory>
+#include <tuple>
+#include <deque>
+#include <utility>
 #include <optional>
+#include <map>
+#include <type_traits>
 
 #include "ConnectionData.hpp"
+#include "ProcessorNode.hpp"
 
+
+struct connection {
+	uint32_t target_id;
+	uint32_t connection_id;
+	bool operator==(const connection& V_right) {
+		return (V_right.target_id == target_id && V_right.connection_id == connection_id);
+	}
+
+	bool operator!=(const connection& V_right) {
+		return (V_right.target_id != target_id || V_right.connection_id != connection_id);
+	}
+};
 class ConnectionHandler {
 
 public:
 
-	struct connection {
-		uint32_t target_id;
-		uint32_t connection_id;
-		bool operator==(const connection& V_right) {
-			return (V_right.connection_id == target_id && V_right.connection_id == connection_id);
-		}
-
-		bool operator!=(const connection& V_right) {
-			return (V_right.connection_id != target_id || V_right.connection_id != connection_id);
-		}
-	};
 
 private:
 	std::deque<connection> connections;
@@ -32,8 +38,6 @@ private:
 	size_t connection_data_count;//for vector::reserve() operation
 	uint32_t reference_count;
 public:
-	ConnectionHandler(const ConnectionHandler&&) = delete;
-
 	explicit ConnectionHandler(const ConnectionData& output_data);
 
 
@@ -59,3 +63,5 @@ private:
 	void inc_ref();
 	void dec_ref();
 };
+
+

@@ -1,5 +1,6 @@
 #pragma once
 #include "ConnectionHandler.hpp"
+#
 
 ConnectionHandler::ConnectionHandler(const ConnectionData& output_data) :
 	output_data(output_data),
@@ -38,13 +39,13 @@ size_t ConnectionHandler::connection_size() const {
 	return connections.size();
 }
 
-ConnectionHandler::connection ConnectionHandler::get_connection(uint32_t idx) {
+connection ConnectionHandler::get_connection(uint32_t idx) {
 
 	return connections[idx];
 }
 
 
-const std::deque<ConnectionHandler::connection>& ConnectionHandler::get_connections() {
+const std::deque<connection>& ConnectionHandler::get_connections() {
 	return connections;
 }
 

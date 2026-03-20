@@ -1,9 +1,6 @@
 #include "App.hpp"
 
-
-
-int main(int argc,char* argv[]) {
-
+int main() {
 
     App app;
     app.init();
