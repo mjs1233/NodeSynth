@@ -11,6 +11,7 @@
 #include "InputRouter.hpp"
 #include "OutputRouter.hpp"
 #include "Outputs.hpp"
+#include "NodeUIUpdateResult.hpp"
 
 template <typename ...output_containers>
 class ProcessNodeBase_t;
@@ -36,7 +37,6 @@ public:
 		id_value(0), 
 		reference_count(0), 
 		window_position(0, 0), 
-		input_connection_count(0),
 		input(input),
 		output(output) {
 
@@ -64,16 +64,35 @@ public:
 
 
 	virtual void process() = 0;
-	virtual void update_ui(bool& connection_start, ProcessNodeBase& start_node) = 0;
+	virtual NodeUIUpdateResult update_ui() = 0;
 };
-
-
-
-
-
 
 template<typename T>
 concept ProcessNodeTrait =
 std::is_base_of<ProcessNodeBase, T>::value
 && std::is_constructible<T>::value
 && std::is_destructible<T>::value;
+
+template<OutputDataType output_type>
+inline void OutputRouter::send(std::shared_ptr<output_type> data, uint32_t id) {
+
+	for (auto& connection : output_connection) {
+
+		connection.next_ptr->input_router().recv(std::static_pointer_cast<OutputHeader>(data), id);
+	}
+}
+
+template<OutputDataType output_type>
+inline bool OutputRouter::check_send(std::shared_ptr<output_type> data, uint32_t id) {
+
+	for (auto& connection : output_connection) {
+		std::optional<InputPort> port = connection.next_ptr->input_router().get_port();
+		if (!port.has_value())
+			continue;
+		if (port.value().type_id != output_type_id)
+			continue;
+
+		connection.next_ptr->input_router().recv(std::static_pointer_cast<OutputHeader>(data), id);
+	}
+	return true; 
+}

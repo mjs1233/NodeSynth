@@ -5,8 +5,6 @@
 
 #include "ProcessorNode.hpp"
 
-#include "ConnectionData.hpp"
-
 
 template <typename T,typename Arg>
 //이름 tlqkf.....
@@ -37,13 +35,12 @@ public:
 	bool connect(
 		uint32_t start_id,
 		uint32_t end_id,
-		const ConnectionData& end_connection_data
-	);
+		uint32_t port_id);
 
 	bool connect(
 		const base_pointer& start_node,
 		const base_pointer& end_node,
-		const ConnectionData& end_connection_data);
+		uint32_t port_id);
 
 
 	std::optional<base_pointer> get_base(size_t idx);
@@ -94,7 +91,7 @@ public:
 				if (!base_ptr.has_value())
 					continue;
 
-				for (const auto& next : base_ptr.value()->next()) {
+				for (const auto& next : base_ptr.value()->output_router().next()) {
 
 					next_nodes.push(next);
 				}

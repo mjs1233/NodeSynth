@@ -135,10 +135,6 @@
     <ClInclude Include="include\AudioManager.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="include\ConnectionHandler.hpp" />
-    <ClInclude Include="include\ConnectionData.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="include\CircularQueue.hpp" />
     <ClInclude Include="include\Debug.hpp" />
     <ClInclude Include="include\Delay.hpp">
@@ -148,6 +144,7 @@
     <ClInclude Include="include\GlobalConfig.hpp" />
     <ClInclude Include="include\InputRouter.hpp" />
     <ClInclude Include="include\NodeContainer.hpp" />
+    <ClInclude Include="include\NodeUIUpdateResult.hpp" />
     <ClInclude Include="include\OutputRouter.hpp" />
     <ClInclude Include="include\Outputs.hpp" />
     <ClInclude Include="include\ProcessorNode.hpp">
@@ -159,7 +156,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\App.cpp" />
-    <ClCompile Include="source\ConnectionHandler.cpp" />
     <ClCompile Include="Source\Delay.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>

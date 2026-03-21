@@ -43,8 +43,6 @@ private:
 
 	uint32_t connect_start_node_id;
 
-	using node_list_t = std::vector<std::shared_ptr<ProcessNodeBase>>;
-	node_list_t nodes;
 
 	NodeContainer node_container;
 	using base_pointer = NodeContainer::base_pointer;
@@ -106,13 +104,13 @@ public:
 	template <ProcessNodeTrait T>
 	std::optional<std::shared_ptr<T>> get(size_t idx) {
 
-		if (idx >= nodes.size())
-			return std::nullopt;
+		std::optional<base_pointer> node = node_container.get_base(idx);
 
-		if (nodes[idx] == nullptr)
+		if (!node.has_value()) {
 			return std::nullopt;
+		}
 
-		return std::static_pointer_cast<T>(nodes[idx]);
+		return std::static_pointer_cast<T>(node);
 	}
 
 	void update_node() {
@@ -125,31 +123,32 @@ public:
 	void ui_update() {
 
 		for (uint32_t idx = 0; idx < node_container.size(); idx++) {
+
 			std::optional<base_pointer> node =  node_container.get_base(idx);
 			
 			if (!node.has_value())
 				continue;
 
-			bool connect_start = false;
-			bool connect_end = false;
-			ConnectionData conn_data = node.value()->update_ui(connect_start, connect_end);
-			if (mode == mode_type::idle && connect_start) {
+			NodeUIUpdateResult result = node.value()->update_ui();
+
+
+			if (mode == mode_type::idle && result.output_pin_clicked) {
 
 				LOG(std::println("start_conn {}", idx))
 				connect_start_node_id = idx;
 				mode = mode_type::connect;
 			}
-			else if (mode == mode_type::connect && connect_end) {
+			else if (mode == mode_type::connect && result.clicked_input_pin.has_value()) {
 
 				LOG(std::println("end_conn {}", idx))
 				uint32_t connect_end_node_id = idx;
 
 				mode = mode_type::idle;
 
-				bool result = node_container.connect(connect_start_node_id, connect_end_node_id, conn_data);
+				bool connection_result = node_container.connect(connect_start_node_id, connect_end_node_id,result.clicked_input_pin.value());
 
-				if (result) {
-					LOG(std::println("connect success {} -> {}", connect_start_node_id ,connect_end_node_id))
+				if (connection_result) {
+					LOG(std::println("connect success {} -> {}", connect_start_node_id , connect_end_node_id))
 				}
 			}
 			draw_connections(node.value());
@@ -168,10 +167,10 @@ private:
 			return;
 		}
 
-		std::deque<connection> connections = node->connection().get_connections();
+		std::deque<OutputRouter::Connection> connections = node->output_router().next();
 
 		for (const auto& conn : connections) {
-			LOG(std::println("draw connection {} ---> {}:{}", node->id(), conn.target_id, conn.connection_id))
+			LOG(std::println("draw connection {} ---> {}:{}", node->id(),conn.next_ptr->id(), conn.id))
 		}
 	}
 

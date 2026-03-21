@@ -8,7 +8,7 @@ NodeContainer::NodeContainer() {
 bool NodeContainer::connect(
 	uint32_t start_id,
 	uint32_t end_id,
-	const ConnectionData& end_connection_data
+	uint32_t port_id
 ) {
 	std::optional<base_pointer> start_node = get_base(start_id);
 	std::optional<base_pointer> end_node = get_base(end_id);
@@ -17,31 +17,45 @@ bool NodeContainer::connect(
 		return false;
 	}
 
-	return connect(start_node.value(), end_node.value(), end_connection_data);
+	return connect(start_node.value(), end_node.value(), port_id);
 }
 
 bool NodeContainer::connect(
 	const base_pointer& start_node, 
 	const base_pointer& end_node, 
-	const ConnectionData& end_connection_data) {
+	uint32_t port_id) {
 
-	if (start_node != nullptr && end_node != nullptr && start_node->id() != end_node->id()) {
 
-		ConnectionData start_data = start_node->connection().get_output();
-		if (start_data.type != end_connection_data.type)
+	// 확인 과정이 너무 복잡함.... 다른 함수로 분리가 필요함.
+
+	// Validate the nodes and prevent circular connections.
+	if (start_node != nullptr && end_node != nullptr && (start_node->id() != end_node->id())) {
+
+		type_id_t output_type_id = start_node->output_router().get_output_type_id();
+		std::optional<InputPort> input_port = end_node->input_router().get_port(port_id);
+		
+		// Verify that the port ID is valid.
+		if (!input_port.has_value())
 			return false;
 
+		// Ensure that the port type matches.
+		if (input_port.value().type_id != output_type_id)
+			return false;
 
-		for (const auto& conn : start_node->connection().get_connections()) {
+		// Check whether the input is already connected to the output.
+		if (input_port.value().allocated && input_port.value().connected_node_id ==  start_node->id())
+			return false;
+		
 
-			if (conn.connection_id == end_connection_data.id) {
-				return false;
-			}
-		}
+		// Verify that there is no circular connection between nodes
 
-		// TODO: Add logic to verify whether a connection between nodes already exists
 
-		start_node->connection().connect(end_node->id(), end_connection_data.id);
+
+		if (!end_node->input_router().add_prev(start_node->id(), port_id))
+			return false;
+
+		start_node->output_router().add_next(end_node, port_id);
+
 		return true;
 	}
 }
@@ -59,7 +73,7 @@ void NodeContainer::make_ref_count_list(std::vector<int32_t>& container) {
 		}
 
 		//for advanced id system
-		container[nodes[idx]->id()] = nodes[idx]->connection().ref_count();
+		container[nodes[idx]->id()] = nodes[idx]->input_router().get_ref_count();
 	}
 }
 
@@ -71,7 +85,8 @@ void NodeContainer::find_start_nodes(std::queue<uint32_t>& container) {
 			continue;
 		}
 
-		if (node->connection().ref_count() == 0) {
+		if (node->input_router().get_ref_count() == 0) {
+
 			container.push(node->id());
 		}
 	}

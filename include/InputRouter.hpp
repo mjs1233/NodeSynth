@@ -13,13 +13,13 @@
 #include "Outputs.hpp"
 #include "ProcessorNode.hpp"
 
-inline static type_id_t get_next_type_id() {
+inline type_id_t get_next_type_id() {
 	static type_id_t current_id = 1;
 	return current_id++;
 }
 
 template <typename T>
-inline static type_id_t get_type_id() {
+inline type_id_t get_type_id() {
 	static const type_id_t id = get_next_type_id();
 	return id;
 }
@@ -41,34 +41,35 @@ struct OutputRecvFunctions {
 	}
 };
 
-template <OutputDataType T>
 struct InputPort {
 
 	type_id_t type_id;
 	std::string port_name;
+	uint32_t connected_node_id;
 	bool allocated;
 
 	InputPort() : 
 		type_id(0),
 		port_name(""),
+		connected_node_id(0),
 		allocated(false) {
 
 	}
 
-	InputPort(type_id_t type_id, std::string port_name) : 
+	InputPort(type_id_t type_id, std::string_view port_name) : 
 		type_id(type_id),
 		port_name(port_name),
-		allocated(true) {
+		connected_node_id(0),
+		allocated(false) {
 
 	}
 };
 
-template <OutputDataType T>
 struct InputPortList {
 
-	std::vector<InputPort<T>> ports;
+	std::vector<InputPort> ports;
 
-	InputPort<T>& operator[](size_t idx) {
+	InputPort& operator[](size_t idx) {
 
 		return ports[idx];
 	}
@@ -78,8 +79,9 @@ template<typename ...output_types>
 class InputRouterBase {
 
 private:
-	std::tuple<OutputRecvFunctions<output_types>...> recv_callback;//약간 희소 행렬 느낌?
-	std::tuple<InputPortList<output_types>...> input_ports;
+	//약간 희소 행렬 느낌?
+	std::tuple<OutputRecvFunctions<output_types>...> recv_callback;
+	InputPortList input_ports;
 	size_t max_port_count;
 	uint32_t next_port_id;
 	
@@ -100,9 +102,7 @@ public:
 			(args.functions.resize(max_port_count), ...);
 			}, recv_callback);
 
-		std::apply([max_port_count](auto&... args) {
-			(args.ports.resize(max_port_count), ...);
-			}, input_ports);
+		this->input_ports.ports.resize(max_port_count);
 	}
 
 	template<OutputDataType output_type, PortIDEnumU32 port_id_type>
@@ -113,18 +113,18 @@ public:
 	}
 
 	template<OutputDataType output_type, PortIDEnumU32 port_id_type>
-	requires (std::same_as<output_types, output_type> || ...)
+	requires (std::same_as<output_types, output_type> || ... )
 	void recv(std::shared_ptr<OutputHeader> data, port_id_type port_id) {
 
 		if (std::to_underlying(port_id) > max_port_count) {
 
-			LOG(std::print("port id underlying value out of range"))
+			//LOG(std::print("port id underlying value out of range"))
 				return;
 		}
 
 		if (std::get<OutputRecvFunctions<output_type>>(recv_callback)[std::to_underlying(port_id)] == nullptr) {
 
-			LOG(std::print("recv callback type not registered"))
+			//LOG(std::print("recv callback type not registered"))
 				return;
 		}
 
@@ -140,25 +140,58 @@ public:
 
 		type_id_t type_id = get_type_id<output_type>();
 
-		std::get<InputPort<output_type>>(input_ports).ports[new_id] = InputPort<output_type>(type_id,name);
+		input_ports[new_id] = InputPort(type_id,name);
 
 		return new_id;
 	}
 
-	template<OutputDataType output_type>
-	std::optional<InputPort<output_type>> get_port(uint32_t id) {
 
-		if (id >= max_port_count) {
+	std::optional<InputPort> get_port(uint32_t port_id) const {
+
+		if (port_id >= max_port_count) {
 
 			return std::nullopt;
 		}
 
-		if (std::get<InputPortList<output_type>>(input_ports).port[id].allocated) {
+		if (input_ports.ports[port_id].allocated) {
 			
 			return std::nullopt;
 		}
 
-		return std::get<InputPortList<output_type>>(input_ports).ports[id];
+		return input_ports.ports[port_id];
+	}
+
+	bool add_prev(uint32_t node_id, uint32_t port_id) {
+
+		if (!get_port(port_id).has_value())
+			return false;
+
+		InputPort& port = get_port_reference(port_id);
+		port.allocated = true;
+		port.connected_node_id = node_id;
+
+		return true;
+	}
+
+	uint32_t get_ref_count() {
+
+		// Consider caching the ref count for efficiency.
+
+		uint32_t count = 0;
+
+		for (uint32_t idx = 0; idx < max_port_count; idx++) {
+			count = input_ports[idx].allocated;
+		}
+
+		return count;
+	}
+
+private:
+
+	// this function does not check whether the port exists
+	inline InputPort& get_port_reference(uint32_t port_id) {
+
+		return input_ports.ports[port_id];
 	}
 
 };

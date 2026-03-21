@@ -1,13 +1,19 @@
 #pragma once
 #include <concepts>
 #include <memory>
-#include "ProcessorNode.hpp"
 
 #include "Outputs.hpp"
 
 
+struct RealtimeSample;
+struct FloatParam;
+struct Trigger;
+template <typename ...output_containers> class ProcessNodeBase_t;
+using ProcessNodeBase = ProcessNodeBase_t<RealtimeSample, FloatParam, Trigger>;
+class InputPort;
+
 class OutputRouter {
-private:
+public:
 	struct Connection {
 		std::shared_ptr<ProcessNodeBase> next_ptr;
 		uint32_t id;
@@ -18,54 +24,69 @@ private:
 		}
 	};
 
-
-	type_id_t type_id;
-	std::vector<Connection> output_connection;
+private:
+	type_id_t output_type_id;
+	std::deque<Connection> output_connection;
 public:
 
 	OutputRouter() {
 
 	}
 
-	template<typename T>
-	void set_type_id() {
+	inline type_id_t get_output_type_id() const {
 
-		type_id = get_type_id<T>();
+		return output_type_id;
 	}
+
+	template<typename T>
+	constexpr void set_type_id() {
+
+		output_type_id = get_type_id<T>();
+	}
+
 
 	void add_next(std::shared_ptr<ProcessNodeBase> next_input,uint32_t id) {
 
 		output_connection.push_back(Connection(next_input, id));
 	}
 
-	template<OutputDataType output_type>
-	void send(std::shared_ptr<output_type> data, uint32_t id) {
+	std::deque<Connection>& next() {
 
-		next_input->recv(std::static_pointer_cast<OutputHeader>(data), id);
+		return output_connection;
+	}
+
+	template<OutputDataType output_type>
+	void send(std::shared_ptr<output_type> data, uint32_t id);
+
+	template<OutputDataType output_type>
+	bool check_send(std::shared_ptr<output_type> data, uint32_t id);
+
+	/*template<OutputDataType output_type>
+	void send(std::shared_ptr<output_type> data, uint32_t id) {
+		
+		for (auto& connection : output_connection) {
+			connection.next_ptr->input_router().recv(std::static_pointer_cast<OutputHeader>(data), id)
+		}
 	}
 
 	template<OutputDataType output_type>
 	bool check_send(std::shared_ptr<output_type> data, uint32_t id) {
 
-		std::optional<InputPort<output_type>> port =
-			next_input->get_port<output_type>(id);
-
-		//check port 
-
-		if (!port.has_value()) {
-
-			return false;
-		}
-
-		if (port.value().type_id != type_id) {
-
-			return false;
-		}
 
 		//send
-		next_input->recv(std::static_pointer_cast<OutputHeader>(data), id);
+		for (auto& connection : output_connection) {
 
-	}
+			std::optional<InputPort> port = connection.next_ptr->input_router().get_port();
+
+			if (!port.has_value())
+				continue;
+
+			if (port.value().type_id != output_type_id) 
+				continue;
+
+			connection.next_ptr->input_router().recv(std::static_pointer_cast<OutputHeader>(data), id)
+		}
+	}*/
 
 
 };
