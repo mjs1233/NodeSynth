@@ -64,15 +64,26 @@ public:
 
 		while (!start_nodes.empty()) {
 
-			std::optional<base_pointer> base_ptr = get_base(start_nodes.front());
+			uint32_t front_id = start_nodes.front();
+			std::optional<base_pointer> base_ptr = get_base(front_id);
+			start_nodes.pop();
 			if (!base_ptr.has_value())
 				continue;
 
-			const std::vector<uint32_t>& connected_nodes = base_ptr.value()->next();
+			if constexpr (requires{ container.push(0); }) {
+
+				container.push(front_id);
+			}
+			else if constexpr (requires{ container.push_back(0); }) {
+
+				container.push_back(front_id);
+			}
+
+			const std::deque<OutputRouter::Connection>& connected_nodes = base_ptr.value()->output_router().next();
 
 			for (const auto& conn_node : connected_nodes) {
 
-				std::optional<base_pointer> conn_ptr = get_base(conn_node);
+				std::optional<base_pointer> conn_ptr = get_base(conn_node.next_ptr->id());
 				if (!conn_ptr.has_value())
 					continue;
 
@@ -83,6 +94,7 @@ public:
 		while (!next_nodes.empty()) {
 
 			uint32_t front_id = next_nodes.front();
+			next_nodes.pop();
 
 			ref_counts[front_id]--;
 			if (ref_counts[front_id] == 0) {
@@ -93,7 +105,7 @@ public:
 
 				for (const auto& next : base_ptr.value()->output_router().next()) {
 
-					next_nodes.push(next);
+					next_nodes.push(next.next_ptr->id());
 				}
 
 				if constexpr (requires{ container.push(0); }) {

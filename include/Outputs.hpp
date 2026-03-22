@@ -35,3 +35,9 @@ struct Trigger : public OutputHeader {
 	Trigger(type_id_t id) : OutputHeader(id), trigger_offset(0) {}
 };
 
+struct VoidOutput : OutputHeader {
+
+	VoidOutput() : OutputHeader(0) {}
+	VoidOutput(type_id_t id) : OutputHeader(id) {}
+
+};

@@ -16,7 +16,7 @@
 template <typename ...output_containers>
 class ProcessNodeBase_t;
 
-using ProcessNodeBase = ProcessNodeBase_t<RealtimeSample, FloatParam, Trigger>;
+using ProcessNodeBase = ProcessNodeBase_t<RealtimeSample, FloatParam, Trigger, VoidOutput>;
 
 template <typename ...output_containers>
 class ProcessNodeBase_t {

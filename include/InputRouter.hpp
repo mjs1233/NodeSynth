@@ -180,7 +180,8 @@ public:
 		uint32_t count = 0;
 
 		for (uint32_t idx = 0; idx < max_port_count; idx++) {
-			count = input_ports[idx].allocated;
+			if (input_ports[idx].allocated)
+				count++;
 		}
 
 		return count;
@@ -196,4 +197,4 @@ private:
 
 };
 
-using InputRouter = InputRouterBase<RealtimeSample, FloatParam, Trigger>;
+using InputRouter = InputRouterBase<RealtimeSample, FloatParam, Trigger,VoidOutput>;

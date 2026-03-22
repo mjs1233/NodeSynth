@@ -1,4 +1,5 @@
 #include "SinusoidalOscillator.hpp"
+#include "Debug.hpp"
 #include <string>
 
 namespace AudioProcessor {
@@ -11,6 +12,8 @@ namespace AudioProcessor {
 	}
 
 	void SinusoidalOscillator::process() {
+
+		LOG(std::println("sin osc {}", id()))
 
 		std::shared_ptr<RealtimeSample> output = std::make_shared<RealtimeSample>();
 		output->samples.resize(sample_buffer.size());

@@ -58,6 +58,7 @@ bool NodeContainer::connect(
 
 		return true;
 	}
+	return false;
 }
 
 

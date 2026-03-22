@@ -1,6 +1,7 @@
 #include "Delay.hpp"
 #include <utility>
 #include <string>
+#include "Debug.hpp"
 
 namespace AudioProcessor {
 
@@ -34,6 +35,8 @@ namespace AudioProcessor {
 
 	//exposition only
 	void Delay::process() {
+
+		LOG(std::println("delay {}",id()))
 
 		std::shared_ptr<RealtimeSample> output = std::make_shared<RealtimeSample>();
 		output->samples.resize(sample_buffer.size());
@@ -84,6 +87,8 @@ namespace AudioProcessor {
 		float delay_ms = static_cast<float>(delay_sample_count) / 48000.f * 1000;
 		ImGui::SetNextItemWidth(200);
 		ImGui::SliderFloat("DELAY_SLIDER", &delay_ms, 0, 2);
+		delay_sample_count = static_cast<uint32_t>(delay_ms / 1000.f * 48000.f);
+
 		ImGui::EndGroup();
 
 		ImGui::SameLine();

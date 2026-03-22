@@ -4,7 +4,7 @@
 
 EditorScene::EditorScene() : state(editor_state::idle) {//audio_manager(AudioManager(2,48000)) {
 
-
+    audio_manager.init(2,48000);
 }
 
 void EditorScene::update(SceneHandler* handler) {
@@ -59,6 +59,15 @@ void EditorScene::update_topbar() {
             ImGui::EndMenu();
         }
 
+
+        if (ImGui::Button("play")) {
+
+            audio_manager.play();
+        }
+        else if (ImGui::Button("stop")) {
+
+            audio_manager.stop();
+        }
 
     }
     ImGui::EndMainMenuBar();

@@ -145,8 +145,10 @@
     <ClInclude Include="include\InputRouter.hpp" />
     <ClInclude Include="include\NodeContainer.hpp" />
     <ClInclude Include="include\NodeUIUpdateResult.hpp" />
+    <ClInclude Include="include\OutputNode.hpp" />
     <ClInclude Include="include\OutputRouter.hpp" />
     <ClInclude Include="include\Outputs.hpp" />
+    <ClInclude Include="include\PlayContext.h" />
     <ClInclude Include="include\ProcessorNode.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>

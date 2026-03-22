@@ -87,6 +87,12 @@
     <ClInclude Include="include\SinusoidalOscillator.hpp">
       <Filter>헤더 파일\Nodes</Filter>
     </ClInclude>
+    <ClInclude Include="include\PlayContext.h">
+      <Filter>헤더 파일\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OutputNode.hpp">
+      <Filter>헤더 파일\Nodes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">

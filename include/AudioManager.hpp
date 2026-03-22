@@ -6,6 +6,7 @@
 #include <queue>
 #include <deque>
 #include <optional>
+#include <atomic>
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_audio.h>
@@ -13,6 +14,7 @@
 #include "Debug.hpp"
 #include "ProcessorNode.hpp"
 #include "NodeContainer.hpp"
+#include "PlayContext.h"
 #include "TMP_tuple_gen.hpp"
 
 template <typename ...output_container>
@@ -39,10 +41,10 @@ private:
 	std::vector<float> audio_buffer;
 	SDL_AudioStream* stream;
 	SDL_AudioSpec audio_spec;
-	mode_type mode;
+	std::atomic<mode_type> mode;
 
 	uint32_t connect_start_node_id;
-
+	PlayContext play_context;
 
 	NodeContainer node_container;
 	using base_pointer = NodeContainer::base_pointer;
@@ -52,17 +54,18 @@ public:
 
 	AudioManager_t() : 
 		stream(nullptr),
-		mode(mode_type::idle),
 		connect_start_node_id(0) {
 	
+		mode.store(mode_type::idle);
 	}
 
 
-	AudioManager_t(uint32_t channel, uint32_t sample_rate) {
+
+	void init(uint32_t channel, uint32_t sample_rate) {
 
 		if (!SDL_Init(SDL_INIT_AUDIO)) {
 			LOG(std::print("error init sdl audio subsystem : {}", SDL_GetError()))
-			exit(1);
+				exit(1);
 		}
 
 		audio_spec.format = SDL_AUDIO_F32;
@@ -70,18 +73,17 @@ public:
 		audio_spec.freq = sample_rate;
 
 		stream = SDL_OpenAudioDeviceStream(
-			SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, 
-			&audio_spec, 
-			AudioCallback<output_container...>, 
+			SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK,
+			&audio_spec,
+			AudioCallback<output_container...>,
 			this
 		);
-		
+
 		if (!stream) {
 			LOG(std::print("error open audio device stream : {}", SDL_GetError()))
 		}
 		SDL_ResumeAudioStreamDevice(stream);
 	}
-
 
 	template <ProcessNodeTrait T, typename ...Args>
 	requires std::is_constructible<T,Args...>::value 
@@ -120,6 +122,27 @@ public:
 	}
 	
 
+	void play() {
+
+		std::deque<uint32_t> update_seq;
+		node_container.calc_node_update_seq(update_seq);
+
+		LOG(std::print("SEQ ==========================\n"));
+		for (const auto& node_id : update_seq) {
+			LOG(std::print("{} ", node_id))
+		}
+		LOG(std::print("==============================\n"));
+
+		play_context.update_seq = update_seq;
+
+		mode.store(mode_type::play);
+	}
+
+	void stop() {
+
+		mode.store(mode_type::idle);
+	}
+
 	void ui_update() {
 
 		for (uint32_t idx = 0; idx < node_container.size(); idx++) {
@@ -132,18 +155,18 @@ public:
 			NodeUIUpdateResult result = node.value()->update_ui();
 
 
-			if (mode == mode_type::idle && result.output_pin_clicked) {
+			if (mode.load() == mode_type::idle && result.output_pin_clicked) {
 
 				LOG(std::println("start_conn {}", idx))
 				connect_start_node_id = idx;
-				mode = mode_type::connect;
+				mode.store(mode_type::connect);
 			}
-			else if (mode == mode_type::connect && result.clicked_input_pin.has_value()) {
+			else if (mode.load() == mode_type::connect && result.clicked_input_pin.has_value()) {
 
 				LOG(std::println("end_conn {}", idx))
 				uint32_t connect_end_node_id = idx;
 
-				mode = mode_type::idle;
+				mode.store(mode_type::idle);
 
 				bool connection_result = node_container.connect(connect_start_node_id, connect_end_node_id,result.clicked_input_pin.value());
 
@@ -157,7 +180,18 @@ public:
 	}
 
 	void audio_update(int additional_amount, int total_amount) {
-		LOG(std::print("add: {} tot: {}\n", additional_amount, total_amount))
+
+		if (mode.load() == mode_type::play) {
+
+			for (const auto& node_id : play_context.update_seq) {
+				std::optional<base_pointer> node = node_container.get_base(node_id);
+				if (!node.has_value())
+					return;
+				node.value()->process();
+			}
+			
+			//LOG(std::print("add: {} tot: {}\n", additional_amount, total_amount))
+		}
 	}
 
 private:
@@ -170,7 +204,7 @@ private:
 		std::deque<OutputRouter::Connection> connections = node->output_router().next();
 
 		for (const auto& conn : connections) {
-			LOG(std::println("draw connection {} ---> {}:{}", node->id(),conn.next_ptr->id(), conn.id))
+			//LOG(std::println("draw connection {} ---> {}:{}", node->id(),conn.next_ptr->id(), conn.id))
 		}
 	}
 
