@@ -1,5 +1,6 @@
 #include "EditorScene.hpp"
 #include "Delay.hpp"
+#include "SinusoidalOscillator.hpp"
 
 EditorScene::EditorScene() : state(editor_state::idle) {//audio_manager(AudioManager(2,48000)) {
 
@@ -48,6 +49,11 @@ void EditorScene::update_topbar() {
 
                 //add Delay
                 audio_manager.add<AudioProcessor::Delay>();
+            }
+            if (ImGui::MenuItem("OSC - SIN 440hz")) {
+
+                //add sin osc
+                audio_manager.add<AudioProcessor::SinusoidalOscillator>();
             }
 
             ImGui::EndMenu();

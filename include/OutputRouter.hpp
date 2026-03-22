@@ -1,6 +1,7 @@
 #pragma once
 #include <concepts>
 #include <memory>
+#include <deque>
 
 #include "Outputs.hpp"
 
@@ -29,6 +30,7 @@ private:
 	std::deque<Connection> output_connection;
 public:
 
+	
 	OutputRouter() {
 
 	}
@@ -56,37 +58,10 @@ public:
 	}
 
 	template<OutputDataType output_type>
-	void send(std::shared_ptr<output_type> data, uint32_t id);
+	void send(std::shared_ptr<output_type> data);
 
 	template<OutputDataType output_type>
-	bool check_send(std::shared_ptr<output_type> data, uint32_t id);
-
-	/*template<OutputDataType output_type>
-	void send(std::shared_ptr<output_type> data, uint32_t id) {
-		
-		for (auto& connection : output_connection) {
-			connection.next_ptr->input_router().recv(std::static_pointer_cast<OutputHeader>(data), id)
-		}
-	}
-
-	template<OutputDataType output_type>
-	bool check_send(std::shared_ptr<output_type> data, uint32_t id) {
-
-
-		//send
-		for (auto& connection : output_connection) {
-
-			std::optional<InputPort> port = connection.next_ptr->input_router().get_port();
-
-			if (!port.has_value())
-				continue;
-
-			if (port.value().type_id != output_type_id) 
-				continue;
-
-			connection.next_ptr->input_router().recv(std::static_pointer_cast<OutputHeader>(data), id)
-		}
-	}*/
+	bool check_send(std::shared_ptr<output_type> data);
 
 
 };

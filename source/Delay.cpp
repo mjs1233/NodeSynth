@@ -6,7 +6,8 @@ namespace AudioProcessor {
 
 
 	//exposition only
-	Delay::Delay() : delay_sample_count(10),
+	Delay::Delay() : 
+		delay_sample_count(10),
 		delay_line(CircularQueue<float>(48000)),
 		ProcessNodeBase(InputRouter(3), OutputRouter()) {
 
@@ -26,9 +27,9 @@ namespace AudioProcessor {
 
 	void Delay::init_ports() {
 
-		input.add_port<RealtimeSample>("sample");
-		input.add_port<FloatParam>("mix");
-		input.add_port<FloatParam>("delay");
+		input.add_port<RealtimeSample>("sample", std::to_underlying(InputTypes::sample));
+		input.add_port<FloatParam>("mix", std::to_underlying(InputTypes::mix));
+		input.add_port<FloatParam>("delay", std::to_underlying(InputTypes::delay_ms));
 	}
 
 	//exposition only
@@ -50,6 +51,8 @@ namespace AudioProcessor {
 				delay_line.pop();
 			}
 		}
+
+		output_router().check_send(output);
 	}
 
 	//exposition only

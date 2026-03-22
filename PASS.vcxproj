@@ -152,6 +152,7 @@
     </ClInclude>
     <ClInclude Include="include\Scene.hpp" />
     <ClInclude Include="include\SceneHandler.hpp" />
+    <ClInclude Include="include\SinusoidalOscillator.hpp" />
     <ClInclude Include="include\TMP_tuple_gen.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +163,7 @@
     <ClCompile Include="source\EditorScene.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\NodeContainer.cpp" />
+    <ClCompile Include="source\SinusoidalOscillator.cpp" />
     <ClCompile Include="_3rd_party\imgui\imgui.cpp" />
     <ClCompile Include="_3rd_party\imgui\imgui_demo.cpp" />
     <ClCompile Include="_3rd_party\imgui\imgui_draw.cpp" />

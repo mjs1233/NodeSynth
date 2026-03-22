@@ -74,25 +74,25 @@ std::is_base_of<ProcessNodeBase, T>::value
 && std::is_destructible<T>::value;
 
 template<OutputDataType output_type>
-inline void OutputRouter::send(std::shared_ptr<output_type> data, uint32_t id) {
+inline void OutputRouter::send(std::shared_ptr<output_type> data) {
 
 	for (auto& connection : output_connection) {
 
-		connection.next_ptr->input_router().recv(std::static_pointer_cast<OutputHeader>(data), id);
+		connection.next_ptr->input_router().recv<output_type>(std::static_pointer_cast<OutputHeader>(data), connection.id);
 	}
 }
 
 template<OutputDataType output_type>
-inline bool OutputRouter::check_send(std::shared_ptr<output_type> data, uint32_t id) {
+inline bool OutputRouter::check_send(std::shared_ptr<output_type> data) {
 
 	for (auto& connection : output_connection) {
-		std::optional<InputPort> port = connection.next_ptr->input_router().get_port();
+		std::optional<InputPort> port = connection.next_ptr->input_router().get_port(connection.id);
 		if (!port.has_value())
 			continue;
 		if (port.value().type_id != output_type_id)
 			continue;
 
-		connection.next_ptr->input_router().recv(std::static_pointer_cast<OutputHeader>(data), id);
+		connection.next_ptr->input_router().recv<output_type>(std::static_pointer_cast<OutputHeader>(data), connection.id);
 	}
 	return true; 
 }

@@ -28,6 +28,9 @@
     <Filter Include="소스 파일\imgui">
       <UniqueIdentifier>{dfe2d4da-00be-4aac-ab7b-bbb6a48a4c7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Nodes">
+      <UniqueIdentifier>{de6aa28a-233b-4359-8b48-4f085e9e795d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Appstate.hpp">
@@ -37,9 +40,6 @@
       <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
     <ClInclude Include="include\ProcessorNode.hpp">
-      <Filter>헤더 파일\AudioSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Delay.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
     <ClInclude Include="include\CircularQueue.hpp">
@@ -81,6 +81,12 @@
     <ClInclude Include="include\Outputs.hpp">
       <Filter>헤더 파일\AudioSystem</Filter>
     </ClInclude>
+    <ClInclude Include="include\Delay.hpp">
+      <Filter>헤더 파일\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SinusoidalOscillator.hpp">
+      <Filter>헤더 파일\Nodes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">
@@ -117,6 +123,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="source\NodeContainer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SinusoidalOscillator.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

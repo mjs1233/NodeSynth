@@ -83,14 +83,12 @@ private:
 	std::tuple<OutputRecvFunctions<output_types>...> recv_callback;
 	InputPortList input_ports;
 	size_t max_port_count;
-	uint32_t next_port_id;
 	
 
 public:
 
 	InputRouterBase(size_t max_port_count = 0) : 
-		max_port_count(max_port_count),
-		next_port_id(0) {
+		max_port_count(max_port_count) {
 
 		set_max_port_count(max_port_count);
 	}
@@ -116,33 +114,35 @@ public:
 	requires (std::same_as<output_types, output_type> || ... )
 	void recv(std::shared_ptr<OutputHeader> data, port_id_type port_id) {
 
-		if (std::to_underlying(port_id) > max_port_count) {
+		recv(data, std::to_underlying(port_id));
+	}
 
-			//LOG(std::print("port id underlying value out of range"))
-				return;
+	template<OutputDataType output_type>
+		requires (std::same_as<output_types, output_type> || ...)
+	void recv(std::shared_ptr<OutputHeader> data, uint32_t port_id) {
+
+		if (port_id > max_port_count) {
+			return;
 		}
 
-		if (std::get<OutputRecvFunctions<output_type>>(recv_callback)[std::to_underlying(port_id)] == nullptr) {
-
-			//LOG(std::print("recv callback type not registered"))
-				return;
+		if (!input_ports[port_id].allocated) {
+			return;
 		}
 
-		std::get<OutputRecvFunctions<output_type>>(recv_callback)[std::to_underlying(port_id)](std::static_pointer_cast<output_type>(data), std::to_underlying(port_id));
+		if (std::get<OutputRecvFunctions<output_type>>(recv_callback)[port_id] == nullptr) {
+			return;
+		}
+
+		std::get<OutputRecvFunctions<output_type>>(recv_callback)[port_id](std::static_pointer_cast<output_type>(data), port_id);
 	}
 
 	template<OutputDataType output_type>
 	requires (std::same_as<output_types, output_type> || ... )
-	uint32_t add_port(const std::string_view& name) {
-
-		uint32_t new_id = next_port_id;
-		next_port_id++;
+	void add_port(const std::string_view& name,uint32_t port_id) {
 
 		type_id_t type_id = get_type_id<output_type>();
 
-		input_ports[new_id] = InputPort(type_id,name);
-
-		return new_id;
+		input_ports[port_id] = InputPort(type_id,name);
 	}
 
 
