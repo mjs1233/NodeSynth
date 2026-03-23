@@ -25,7 +25,7 @@ public:
 		this->reserved_size = other.reserved_size;
 		this->top_idx = other.top_idx;
 
-		memcpy(this->data, other.data, other.reserved_size * sizeof(element_type));
+		std::copy(other.data, other.data + reserved_size, this->data);
 	}
 
 	StaticStack(StaticStack<element_type>&& other) noexcept {
@@ -50,7 +50,7 @@ public:
 		this->top_idx = other.top_idx;
 		data = new element_type[reserved_size];
 
-		std::copy(other.data, other.data + reserved_size, data);
+		std::copy_n(other.data, other.top_idx, data);
 
 		return *this;
 	}

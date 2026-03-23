@@ -24,16 +24,21 @@ public:
 void run() {
     //BufferPool<int> buf_pool(512, 1024);
     ScopedTimer timer("Buffer Pool");
-
+    BufferPool<int> pool(512, 1024);
 
     for (size_t idx = 0; idx < 1024; idx++) {
 
-        std::vector<int> buf;
-        buf.resize(512);
-        for (size_t idx = 0; idx < 512; idx++)
-            buf[idx] = 0;
+        std::expected<BufferPool<int>::id_type, BufferPool<int>::error_code>  exp_id = pool.alloc_block();
+        if (!exp_id.has_value()) {
+            std::print("tlqkf?");
+            return;
+        }
+        int *p = pool.ptr(exp_id.value());
 
-        buf.clear();
+        for (size_t j = 0; j < 512; j++) {
+            p[j] = 0;
+        }
+        pool.return_block(exp_id.value());
     }
 
 
