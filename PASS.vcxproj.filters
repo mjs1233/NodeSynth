@@ -93,6 +93,12 @@
     <ClInclude Include="include\OutputNode.hpp">
       <Filter>헤더 파일\Nodes</Filter>
     </ClInclude>
+    <ClInclude Include="include\BufferPool.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StaticStack.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">

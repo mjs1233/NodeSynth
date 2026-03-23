@@ -135,6 +135,7 @@
     <ClInclude Include="include\AudioManager.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="include\BufferPool.hpp" />
     <ClInclude Include="include\CircularQueue.hpp" />
     <ClInclude Include="include\Debug.hpp" />
     <ClInclude Include="include\Delay.hpp">
@@ -155,6 +156,7 @@
     <ClInclude Include="include\Scene.hpp" />
     <ClInclude Include="include\SceneHandler.hpp" />
     <ClInclude Include="include\SinusoidalOscillator.hpp" />
+    <ClInclude Include="include\StaticStack.hpp" />
     <ClInclude Include="include\TMP_tuple_gen.hpp" />
   </ItemGroup>
   <ItemGroup>
