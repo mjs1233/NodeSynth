@@ -6,28 +6,52 @@
 #include "Debug.hpp"
 #include "BufferPool.hpp"
 
+
+enum class AudioLIB {
+
+	SDL_AUDIO,
+	RTAUDIO
+};
+
 struct PlayContext {
 
 	std::deque<uint32_t> update_seq;
-	BufferPool<float> sample_pool;
-	RtAudio audio;
+	BufferPool<float> transfer_pool;
+	AudioLIB audio_lib;
 
-	RtAudio::StreamParameters parameters;
+
+	RtAudio rtaudio;
+
+	RtAudio::StreamParameters rt_parameters;
+
+	SDL_AudioSpec sdl_audio_spec;
+
 	uint32_t sample_rate;
 	uint32_t buffer_frames;
 
-	PlayContext(uint32_t buffer_frames,uint32_t sample_block_count,uint32_t sample_rate) :
-	sample_pool(BufferPool<float>(buffer_frames, sample_block_count)) {
-		init_RtAudio(sample_rate,buffer_frames);
+	PlayContext(uint32_t buffer_frames,uint32_t sample_block_count,uint32_t sample_rate,AudioLIB audio_lib) :
+	transfer_pool(BufferPool<float>(buffer_frames, sample_block_count)),
+	audio_lib(audio_lib) {
+
+		if (audio_lib == AudioLIB::RTAUDIO) {
+
+			init_RtAudio_Param(sample_rate,buffer_frames);
+		}
 	}
 
-	void init_RtAudio(uint32_t sample_rate, uint32_t buffer_frames) {
+	[[deprecated]]
+	void init_SDL_Param(uint32_t sample_rate) {
 
-		RtAudio::Api api = audio.getCurrentApi();
+	}
 
-		parameters.deviceId = audio.getDefaultOutputDevice();
-		parameters.nChannels = 2;
-		parameters.firstChannel = 0;
+
+	void init_RtAudio_Param(uint32_t sample_rate, uint32_t buffer_frames) {
+
+		RtAudio::Api api = rtaudio.getCurrentApi();
+
+		rt_parameters.deviceId = rtaudio.getDefaultOutputDevice();
+		rt_parameters.nChannels = 2;
+		rt_parameters.firstChannel = 0;
 		this->sample_rate = sample_rate;
 		this->buffer_frames = buffer_frames;
 

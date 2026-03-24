@@ -4,7 +4,6 @@
 
 EditorScene::EditorScene() : state(editor_state::idle) {//audio_manager(AudioManager(2,48000)) {
 
-    audio_manager.init(2,48000);
 }
 
 void EditorScene::update(SceneHandler* handler) {
