@@ -16,7 +16,7 @@ enum class AudioLIB {
 struct PlayContext {
 
 	std::deque<uint32_t> update_seq;
-	BufferPool<float> transfer_pool;
+	BufferPool<float> sample_pool;
 	AudioLIB audio_lib;
 
 
@@ -24,13 +24,12 @@ struct PlayContext {
 
 	RtAudio::StreamParameters rt_parameters;
 
-	SDL_AudioSpec sdl_audio_spec;
 
 	uint32_t sample_rate;
 	uint32_t buffer_frames;
 
-	PlayContext(uint32_t buffer_frames,uint32_t sample_block_count,uint32_t sample_rate,AudioLIB audio_lib) :
-	transfer_pool(BufferPool<float>(buffer_frames, sample_block_count)),
+	PlayContext(uint32_t buffer_frames, uint32_t sample_block_count, uint32_t sample_rate, AudioLIB audio_lib) :
+	sample_pool(BufferPool<float>(buffer_frames, sample_block_count)),
 	audio_lib(audio_lib) {
 
 		if (audio_lib == AudioLIB::RTAUDIO) {

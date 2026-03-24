@@ -14,13 +14,14 @@ template <typename element_type>
 requires std::is_trivially_copyable<element_type>::value
 class BufferPool {
 public:
-	
-	using id_type = size_t;
 
 	enum class error_code {
 
 		buffer_full
 	};
+
+	using id_type = size_t;
+	using alloc_result_t = std::expected<id_type,error_code>;
 
 private:
 	element_type* data = nullptr;

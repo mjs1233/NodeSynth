@@ -11,21 +11,29 @@ namespace AudioProcessor {
 
 	}
 
-	void SinusoidalOscillator::process() {
+	void SinusoidalOscillator::process(PlayContext& context) {
 
 		LOG(std::println("sin osc {}", id()))
+		BufferPool<float>& buffer_pool = context.sample_pool;
 
-		std::shared_ptr<RealtimeSample> output = std::make_shared<RealtimeSample>();
-		output->samples.resize(sample_buffer.size());
+		std::shared_ptr<RealtimeSample> p_output_container = std::make_shared<RealtimeSample>();
+		BufferPool<float>::alloc_result_t exp_id = buffer_pool.alloc_block();
 
-		for (auto& out : output->samples) {
+		//check alloc state
+		if (!exp_id.has_value())
+			return;
 
-			out = std::sinf(2.f * 3.141592f * 440.f * (total_sample_count%48000) / 48000.f);
+		BufferPool<float>::id_type output_id = exp_id.value();
+		float* output = buffer_pool.ptr(output_id);
+
+		for (size_t idx = 0; idx < context.buffer_frames; idx++) {
+
+			output[idx] = std::sinf(2.f * 3.141592f * 440.f * (total_sample_count%48000) / 48000.f);
 
 			total_sample_count++;
 			
 		}
-		output_router().check_send(output);
+		output_router().check_send(p_output_container);
 	}
 
 	NodeUIUpdateResult SinusoidalOscillator::update_ui() {

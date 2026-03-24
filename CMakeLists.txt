@@ -10,7 +10,6 @@ if(CMAKE_BUILD_TYPE MATCHES "Release")
     add_compile_options(/O2 /Oi /Ot)
 endif()
 
-add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 add_subdirectory(_3rd_party/rtaudio)
 

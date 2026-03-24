@@ -31,31 +31,47 @@ namespace AudioProcessor {
 		input.add_port<RealtimeSample>("sample", std::to_underlying(InputTypes::sample));
 		input.add_port<FloatParam>("mix", std::to_underlying(InputTypes::mix));
 		input.add_port<FloatParam>("delay", std::to_underlying(InputTypes::delay_ms));
+
+		input.add_recv<RealtimeSample>([this](std::shared_ptr<OutputHeader> data) {this->input_sample(data);},InputTypes::sample);
+		input.add_recv<FloatParam>([this](std::shared_ptr<OutputHeader> data) {this->edit_mix_ratio(data);},InputTypes::mix);
+		input.add_recv<FloatParam>([this](std::shared_ptr<OutputHeader> data) {this->edit_delay_time(data);},InputTypes::delay_ms);
 	}
 
 	//exposition only
-	void Delay::process() {
+	void Delay::process(PlayContext& context) {
 
 		LOG(std::println("delay {}",id()))
 
-		std::shared_ptr<RealtimeSample> output = std::make_shared<RealtimeSample>();
-		output->samples.resize(sample_buffer.size());
+		BufferPool<float>& buffer_pool = context.sample_pool;
+
+		std::shared_ptr<RealtimeSample> p_output_container = std::make_shared<RealtimeSample>();
+		BufferPool<float>::alloc_result_t exp_id = buffer_pool.alloc_block();
+
+		//check alloc state
+		if (!exp_id.has_value())
+			return;
+
+		BufferPool<float>::id_type output_id = exp_id.value();
+
+		float* input = buffer_pool.ptr(input_id);
+		float* output = buffer_pool.ptr(output_id);
 
 		while (delay_sample_count < delay_line.size()) {
 			delay_line.pop();
 		}
 
-		for (size_t idx = 0; idx < sample_buffer.size(); idx++) {
+		for (size_t idx = 0; idx < context.buffer_frames; idx++) {
 
-			delay_line.push(sample_buffer[idx]);
+			delay_line.push(input[idx]);
 
 			if (delay_sample_count <= delay_line.size()) {
-				output->samples[idx] = delay_line.front();
+				output[idx] = delay_line.front();
 				delay_line.pop();
 			}
 		}
 
-		output_router().check_send(output);
+		p_output_container->transfer_buffer_id = output_id;
+		output_router().check_send(p_output_container);
 	}
 
 	//exposition only
@@ -107,21 +123,23 @@ namespace AudioProcessor {
 		return result;
 	}
 
-	void Delay::input_sample(std::shared_ptr<RealtimeSample> samples) {
+	void Delay::input_sample(std::shared_ptr<OutputHeader> samples) {
 
-		sample_buffer = samples->samples;
+		input_id = std::static_pointer_cast<RealtimeSample>(samples)->transfer_buffer_id;
 	}
 
-	void Delay::edit_delay_time(std::shared_ptr<FloatParam> time/*ms*/) {
+	void Delay::edit_delay_time(std::shared_ptr<OutputHeader> input/*ms*/) {
+
+		std::shared_ptr<FloatParam> time = std::static_pointer_cast<FloatParam>(input);
 
 		if (time->data < max_delay_time_ms) {
 			delay_sample_count = static_cast<uint32_t>(static_cast<float>(time->data) / 1000.f * 48000.f);
 		}
 	}
 
-	void Delay::edit_mix_ratio(std::shared_ptr<FloatParam> ratio) {
+	void Delay::edit_mix_ratio(std::shared_ptr<OutputHeader> ratio) {
 
-		mix = ratio->data;
+		mix = std::static_pointer_cast<FloatParam>(ratio)->data;
 	}
 
 }

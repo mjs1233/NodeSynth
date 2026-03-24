@@ -23,7 +23,7 @@ namespace AudioProcessor {
 		using output_container = VoidOutput;
 
 
-		virtual void process() override;
+		virtual void process(PlayContext& context) override;
 		virtual NodeUIUpdateResult update_ui() override;
 
 	private:

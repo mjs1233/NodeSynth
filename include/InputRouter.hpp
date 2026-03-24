@@ -33,9 +33,9 @@ concept OutputDataType = std::is_base_of<OutputHeader, T>::value;
 template <typename T>
 struct OutputRecvFunctions {
 
-	std::vector<std::function<void(std::shared_ptr<T>, uint32_t)>> functions;
+	std::vector<std::function<void(std::shared_ptr<T>)>> functions;
 
-	std::function<void(std::shared_ptr<T>, uint32_t)>& operator[](size_t idx) {
+	std::function<void(std::shared_ptr<T>)>& operator[](size_t idx) {
 
 		return functions[idx];
 	}
@@ -105,7 +105,7 @@ public:
 
 	template<OutputDataType output_type, PortIDEnumU32 port_id_type>
 	requires (std::same_as<output_types,output_type> || ... )
-	void add_recv(const std::function<void(std::shared_ptr<OutputHeader>, uint32_t id)>& func, port_id_type port_id) {
+	void add_recv(const std::function<void(std::shared_ptr<OutputHeader>)>& func, port_id_type port_id) {
 
 		std::get<OutputRecvFunctions<output_type>>(recv_callback)[std::to_underlying(port_id)] = func;
 	}
@@ -133,7 +133,7 @@ public:
 			return;
 		}
 
-		std::get<OutputRecvFunctions<output_type>>(recv_callback)[port_id](std::static_pointer_cast<output_type>(data), port_id);
+		std::get<OutputRecvFunctions<output_type>>(recv_callback)[port_id](std::static_pointer_cast<output_type>(data));
 	}
 
 	template<OutputDataType output_type>

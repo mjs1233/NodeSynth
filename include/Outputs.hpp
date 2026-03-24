@@ -1,6 +1,7 @@
 #pragma once
 #include <cinttypes>
 #include <vector>
+#include "BufferPool.hpp"
 
 using type_id_t = uint32_t;
 struct OutputHeader {
@@ -13,12 +14,12 @@ struct OutputHeader {
 	virtual ~OutputHeader() = default;
 };
 
-//이건 너무 ㅂㅅ같은 방법임.. 복사가 일어나잖아...ㅅㅂ 아마도 buffer pool 같은것을 극한으로 최적화해서 쓰는게 좋을듯
 struct RealtimeSample : public OutputHeader {
-	std::vector<float> samples;
 
-	RealtimeSample() : OutputHeader(0) {}
-	RealtimeSample(type_id_t id) : OutputHeader(id) {}
+
+	BufferPool<float>::id_type transfer_buffer_id;
+	RealtimeSample() : OutputHeader(0),transfer_buffer_id(0xFFFF) {}
+	RealtimeSample(type_id_t id) : OutputHeader(id),transfer_buffer_id(0xFFFF) {}
 };
 
 struct FloatParam : public OutputHeader {

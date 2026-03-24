@@ -24,7 +24,8 @@ namespace AudioProcessor {
 		size_t delay_sample_count;
 
 		float mix = 0;
-		std::vector<float> sample_buffer;
+
+		BufferPool<float>::id_type input_id;
 
 
 
@@ -37,13 +38,13 @@ namespace AudioProcessor {
 		using output_container = RealtimeSample;
 
 
-		virtual void process() override;
+		virtual void process(PlayContext& context) override;
 		virtual NodeUIUpdateResult update_ui() override;
 	private:
 		void init_ports();
-		void input_sample(std::shared_ptr<RealtimeSample> samples);
-		void edit_delay_time(std::shared_ptr<FloatParam> time/*ms*/);
-		void edit_mix_ratio(std::shared_ptr<FloatParam> ratio);
+		void input_sample(std::shared_ptr<OutputHeader> samples);
+		void edit_delay_time(std::shared_ptr<OutputHeader> input/*ms*/);
+		void edit_mix_ratio(std::shared_ptr<OutputHeader> ratio);
 
 	};               
 

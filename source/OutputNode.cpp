@@ -10,7 +10,7 @@ namespace AudioProcessor {
     }
 
 
-    void OutputNode::process() {
+    void OutputNode::process(PlayContext& context) {
 
     }
 

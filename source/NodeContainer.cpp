@@ -110,6 +110,7 @@ size_t NodeContainer::add(const base_pointer& node) {
 
 	nodes.push_back(node);
 	nodes[nodes.size() - 1]->set_id(nodes.size() - 1);
+
 	//TODO) add advanced id management system
 	return nodes.size() - 1;
 }

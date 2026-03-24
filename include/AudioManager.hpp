@@ -114,7 +114,7 @@ public:
 		LOG(std::print("==============================\n"));
 
 		play_context.update_seq = update_seq;
-		play_context.transfer_pool = BufferPool<float>(512,256);
+		play_context.sample_pool = BufferPool<float>(512,256);
 
 		if ( play_context.rtaudio.openStream( &play_context.rt_parameters, NULL, RTAUDIO_FLOAT32, play_context.sample_rate,
 					   &play_context.buffer_frames, &AudioCallback<output_container...>, this )){
@@ -192,10 +192,12 @@ public:
 		if (mode.load() == mode_type::play) {
 
 			for (const auto& node_id : play_context.update_seq) {
+
 				std::optional<base_pointer> node = node_container.get_base(node_id);
 				if (!node.has_value())
 					return;
-				node.value()->process();
+
+				node.value()->process(play_context);
 			}
 			
 			//LOG(std::print("add: {} tot: {}\n", additional_amount, total_amount))
@@ -230,7 +232,8 @@ template <typename ...output_container>
 int AudioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 		 double streamTime, RtAudioStreamStatus status, void *userData ) {
 
-	LOG(std::println("AUDIO CALLBACK : {}",nBufferFrames))
+	//LOG(std::println("AUDIO CALLBACK : {}",nBufferFrames))
+
 	static_cast<AudioManager_t<output_container...>*>(userData)->audio_update(inputBuffer,outputBuffer,nBufferFrames,streamTime,status);
 	return 0;
 
