@@ -6,4 +6,5 @@ target_sources(PASS PRIVATE
     NodeContainer.cpp
     Delay.cpp
     SinusoidalOscillator.cpp
+    OutputNode.cpp
 )

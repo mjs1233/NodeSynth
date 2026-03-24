@@ -11,6 +11,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_audio.h>
 
+#include "CircularQueue.hpp"
 #include "Debug.hpp"
 #include "ProcessorNode.hpp"
 #include "NodeContainer.hpp"
@@ -38,13 +39,17 @@ private:
 public:
 
 private:
-	std::vector<float> audio_buffer;
+	size_t sample_per_update;
+	CircularQueue<float> audio_queue;
 	SDL_AudioStream* stream;
 	SDL_AudioSpec audio_spec;
+
+
 	std::atomic<mode_type> mode;
 
 	uint32_t connect_start_node_id;
 	PlayContext play_context;
+
 
 	NodeContainer node_container;
 	using base_pointer = NodeContainer::base_pointer;
@@ -54,7 +59,10 @@ public:
 
 	AudioManager_t() : 
 		stream(nullptr),
-		connect_start_node_id(0) {
+		connect_start_node_id(0),
+		play_context(256,256,48000),
+		audio_queue(48000),
+		sample_per_update() {
 	
 		mode.store(mode_type::idle);
 	}
@@ -134,6 +142,7 @@ public:
 		LOG(std::print("==============================\n"));
 
 		play_context.update_seq = update_seq;
+		play_context.sample_pool = BufferPool<float>(512,256);
 
 		mode.store(mode_type::play);
 	}
@@ -193,6 +202,12 @@ public:
 			//LOG(std::print("add: {} tot: {}\n", additional_amount, total_amount))
 		}
 	}
+
+	void seperate_audio_buffer() {
+
+
+	}
+
 
 private:
 	void draw_connections(base_pointer node) {

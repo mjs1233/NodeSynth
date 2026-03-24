@@ -368,3 +368,5 @@ PASS.slnx
 
 PASS.vcxproj
 PASS.vcxproj.filters
+_3rd_party/rtaudio/doc/
+_3rd_party/tests/

@@ -2,30 +2,32 @@
 #include <optional>
 
 #include "ProcessorNode.hpp"
+#include "BufferPool.hpp"
 
 
 namespace AudioProcessor {
 
 	//AudioProcessorNode
 	//exposition only
-	class SinusoidalOscillator : public ProcessNodeBase {
+	class OutputNode : public ProcessNodeBase {
 
 	private:
-		std::vector<float> sample_buffer;
 
+		bool input_buffer_filled;
+		BufferPool<float>::id_type input_buffer_id;
 		uint64_t total_sample_count;
 
 	public:
+		OutputNode();
 
-		SinusoidalOscillator();
-
-		using output_container = RealtimeSample;
+		using output_container = VoidOutput;
 
 
 		virtual void process() override;
 		virtual NodeUIUpdateResult update_ui() override;
-	private:
 
+	private:
+		void input_sample(std::shared_ptr<RealtimeSample> samples);
 	};
 
 
