@@ -16,7 +16,7 @@ namespace AudioProcessor {
 		LOG(std::println("sin osc {}", id()))
 		BufferPool<float>& buffer_pool = context.sample_pool;
 
-		std::shared_ptr<RealtimeSample> p_output_container = std::make_shared<RealtimeSample>();
+		std::unique_ptr<RealtimeSample> p_output_container = std::make_unique<RealtimeSample>();
 		BufferPool<float>::alloc_result_t exp_id = buffer_pool.alloc_block();
 
 		//check alloc state
@@ -33,7 +33,7 @@ namespace AudioProcessor {
 			total_sample_count++;
 			
 		}
-		output_router().check_send(p_output_container);
+		output_router().check_send(std::move(p_output_container));
 	}
 
 	NodeUIUpdateResult SinusoidalOscillator::update_ui() {

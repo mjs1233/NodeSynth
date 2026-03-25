@@ -59,10 +59,10 @@ public:
 	}
 
 	template<OutputDataType output_type>
-	void send(std::shared_ptr<output_type> data);
+	void send(std::unique_ptr<output_type> data);
 
 	template<OutputDataType output_type>
-	bool check_send(std::shared_ptr<output_type> data);
+	bool check_send(std::unique_ptr<output_type> data);
 
 
 };

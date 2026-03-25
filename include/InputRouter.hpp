@@ -153,11 +153,6 @@ public:
 			return std::nullopt;
 		}
 
-		if (input_ports.ports[port_id].allocated) {
-			
-			return std::nullopt;
-		}
-
 		return input_ports.ports[port_id];
 	}
 

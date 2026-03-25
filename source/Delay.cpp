@@ -44,7 +44,7 @@ namespace AudioProcessor {
 
 		BufferPool<float>& buffer_pool = context.sample_pool;
 
-		std::shared_ptr<RealtimeSample> p_output_container = std::make_shared<RealtimeSample>();
+		std::unique_ptr<RealtimeSample> p_output_container = std::make_unique<RealtimeSample>();
 		BufferPool<float>::alloc_result_t exp_id = buffer_pool.alloc_block();
 
 		//check alloc state
@@ -71,7 +71,8 @@ namespace AudioProcessor {
 		}
 
 		p_output_container->transfer_buffer_id = output_id;
-		output_router().check_send(p_output_container);
+		buffer_pool.return_block(input_id);
+		output_router().check_send(std::move(p_output_container));
 	}
 
 	//exposition only
@@ -123,12 +124,12 @@ namespace AudioProcessor {
 		return result;
 	}
 
-	void Delay::input_sample(std::shared_ptr<OutputHeader> samples) {
+	void Delay::input_sample(std::unique_ptr<OutputHeader> samples) {
 
-		input_id = std::static_pointer_cast<RealtimeSample>(samples)->transfer_buffer_id;
+		input_id = ((RealtimeSample*)samples.get())->transfer_buffer_id;
 	}
 
-	void Delay::edit_delay_time(std::shared_ptr<OutputHeader> input/*ms*/) {
+	void Delay::edit_delay_time(std::unique_ptr<OutputHeader> input/*ms*/) {
 
 		std::shared_ptr<FloatParam> time = std::static_pointer_cast<FloatParam>(input);
 
@@ -137,7 +138,7 @@ namespace AudioProcessor {
 		}
 	}
 
-	void Delay::edit_mix_ratio(std::shared_ptr<OutputHeader> ratio) {
+	void Delay::edit_mix_ratio(std::unique_ptr<OutputHeader> ratio) {
 
 		mix = std::static_pointer_cast<FloatParam>(ratio)->data;
 	}

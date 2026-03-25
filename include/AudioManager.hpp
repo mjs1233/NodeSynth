@@ -204,11 +204,6 @@ public:
 		}
 	}
 
-	void seperate_audio_buffer() {
-
-
-	}
-
 
 private:
 	void draw_connections(base_pointer node) {
