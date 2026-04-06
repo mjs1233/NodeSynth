@@ -11,6 +11,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_audio.h>
 
+#include "CircularQueue.hpp"
 #include "Debug.hpp"
 #include "ProcessorNode.hpp"
 #include "NodeContainer.hpp"
@@ -18,8 +19,8 @@
 #include "TMP_tuple_gen.hpp"
 
 template <typename ...output_container>
-static void SDLCALL AudioCallback(void* user_data, SDL_AudioStream* audio_stream, int additional_amount, int total_amount);
-
+int AudioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
+		 double streamTime, RtAudioStreamStatus status, void *userData );
 
 
 template <typename ...output_container>
@@ -38,13 +39,14 @@ private:
 public:
 
 private:
-	std::vector<float> audio_buffer;
-	SDL_AudioStream* stream;
-	SDL_AudioSpec audio_spec;
+	size_t sample_per_update;
+	CircularQueue<float> audio_queue;
+
 	std::atomic<mode_type> mode;
 
 	uint32_t connect_start_node_id;
 	PlayContext play_context;
+
 
 	NodeContainer node_container;
 	using base_pointer = NodeContainer::base_pointer;
@@ -52,38 +54,16 @@ private:
 
 public:
 
-	AudioManager_t() : 
-		stream(nullptr),
-		connect_start_node_id(0) {
+	AudioManager_t() :
+		connect_start_node_id(0),
+		play_context(256,256,48000,AudioLIB::RTAUDIO),
+		audio_queue(48000),
+		sample_per_update() {
 	
 		mode.store(mode_type::idle);
 	}
 
 
-
-	void init(uint32_t channel, uint32_t sample_rate) {
-
-		if (!SDL_Init(SDL_INIT_AUDIO)) {
-			LOG(std::print("error init sdl audio subsystem : {}", SDL_GetError()))
-				exit(1);
-		}
-
-		audio_spec.format = SDL_AUDIO_F32;
-		audio_spec.channels = channel;
-		audio_spec.freq = sample_rate;
-
-		stream = SDL_OpenAudioDeviceStream(
-			SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK,
-			&audio_spec,
-			AudioCallback<output_container...>,
-			this
-		);
-
-		if (!stream) {
-			LOG(std::print("error open audio device stream : {}", SDL_GetError()))
-		}
-		SDL_ResumeAudioStreamDevice(stream);
-	}
 
 	template <ProcessNodeTrait T, typename ...Args>
 	requires std::is_constructible<T,Args...>::value 
@@ -134,13 +114,37 @@ public:
 		LOG(std::print("==============================\n"));
 
 		play_context.update_seq = update_seq;
+		play_context.sample_pool = BufferPool<float>(512,256);
 
+		if ( play_context.rtaudio.openStream( &play_context.rt_parameters, NULL, RTAUDIO_FLOAT32, play_context.sample_rate,
+					   &play_context.buffer_frames, &AudioCallback<output_container...>, this )){
+			return;
+		}
+
+		if ( play_context.rtaudio.startStream() == RTAUDIO_SYSTEM_ERROR) {
+			LOG(std::cout << play_context.rtaudio.getErrorText() << std::endl)
+
+			if ( play_context.rtaudio.isStreamOpen())
+				play_context.rtaudio.closeStream();
+
+			return;
+		}
+
+		LOG(std::print("START!\n"))
 		mode.store(mode_type::play);
 	}
 
 	void stop() {
 
 		mode.store(mode_type::idle);
+
+		if ( play_context.rtaudio.isStreamRunning() )
+			play_context.rtaudio.stopStream();
+
+
+		if ( play_context.rtaudio.isStreamOpen())
+			play_context.rtaudio.closeStream();
+
 	}
 
 	void ui_update() {
@@ -179,20 +183,27 @@ public:
 
 	}
 
-	void audio_update(int additional_amount, int total_amount) {
+	void audio_update(
+		void* input, void* output,
+		unsigned int nBufferFrames,
+		double streamTime,
+		RtAudioStreamStatus status ) {
 
 		if (mode.load() == mode_type::play) {
 
 			for (const auto& node_id : play_context.update_seq) {
+
 				std::optional<base_pointer> node = node_container.get_base(node_id);
 				if (!node.has_value())
 					return;
-				node.value()->process();
+
+				node.value()->process(play_context);
 			}
 			
 			//LOG(std::print("add: {} tot: {}\n", additional_amount, total_amount))
 		}
 	}
+
 
 private:
 	void draw_connections(base_pointer node) {
@@ -213,13 +224,14 @@ private:
 
 
 template <typename ...output_container>
-static void __cdecl AudioCallback(
-	void* user_data, 
-	SDL_AudioStream* audio_stream, 
-	int additional_amount, 
-	int total_amount) {
+int AudioCallback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
+		 double streamTime, RtAudioStreamStatus status, void *userData ) {
 
-	reinterpret_cast<AudioManager_t<output_container...>*>(user_data)->audio_update(additional_amount,total_amount);
+	//LOG(std::println("AUDIO CALLBACK : {}",nBufferFrames))
+
+	static_cast<AudioManager_t<output_container...>*>(userData)->audio_update(inputBuffer,outputBuffer,nBufferFrames,streamTime,status);
+	return 0;
+
 }
 
 

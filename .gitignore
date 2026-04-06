@@ -361,3 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+.idea/
+
+PASS.slnx
+
+PASS.vcxproj
+PASS.vcxproj.filters
+_3rd_party/rtaudio/doc/
+_3rd_party/tests/
